@@ -75,6 +75,8 @@ export const pieces: any[] = [
 	{ role: 'rook' },
 ];
 
+let drawState = 0;
+
 export class Piece {
 	public role: string;
 	public position = 0;
@@ -101,7 +103,13 @@ export class Piece {
 		this.row = Math.floor(this.position / 8);
 
 		if (this.img) {
-			ctx.drawImage(this.img, 25, this.row * 100 + 25);
+			if (drawState >= 8) {
+				drawState = 0;
+			}
+
+			ctx.drawImage(this.img, drawState * 100 + 25, this.row * 100 + 25);
+
+			drawState++;
 		}
 	}
 }
