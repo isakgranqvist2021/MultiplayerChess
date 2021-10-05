@@ -18,9 +18,10 @@ export class Board {
 	public w: number;
 	public h: number;
 	public squares: Square[];
-	private colors: any[] = ['white', 'black'];
+	private colors: any[];
 
 	constructor(settings: Settings) {
+		this.colors = settings.colors;
 		this.x = 0;
 		this.y = 0;
 		this.totalSquares = 64;

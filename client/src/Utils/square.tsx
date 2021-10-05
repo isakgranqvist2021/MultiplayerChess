@@ -1,5 +1,7 @@
 /** @format */
 
+import { Piece } from './piece';
+
 export class Square {
 	public x: number;
 	public y: number;
