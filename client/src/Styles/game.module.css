@@ -3,5 +3,6 @@
 .canvas {
 	width: 600px;
 	height: 600px;
-	background: #333;
+	background: #000;
+	border: 3px solid #000;
 }

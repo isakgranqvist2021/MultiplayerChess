@@ -8,32 +8,55 @@ const settings = {
 	height: 600,
 };
 
-const square = () => {};
+interface ISquare {
+	x: number;
+	y: number;
+	w: number;
+	h: number;
+	color: string;
+}
+
+const colors = ['white', 'black'];
 
 export default function Game(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
 
 	const init = (ctx: CanvasRenderingContext2D): void => {
-		for (let i = 0; i < settings.width / 64; i++) {
-			// every 8th iteration increment by 1
-			let y = 0;
+		let squares: number = 64;
+		let perLine: number = 8;
+		let board: ISquare[] = [];
+		let x = 0;
+		let y = 0;
+		for (let i = 0; i < squares; i++) {
+			let width = settings.width / perLine;
+			let height = settings.height / perLine;
+			let color = colors[0];
 
-			console.log(y);
+			let square = {
+				x: x,
+				y: y,
+				w: width,
+				h: height,
+				color,
+			};
 
-			if (i % 2 === 1) {
-				ctx.fillStyle = 'red';
+			x += width;
+
+			if (x >= settings.width) {
+				x = 0;
+				y += height;
 			} else {
-				ctx.fillStyle = 'yellow';
+				colors.reverse();
 			}
 
-			ctx.fillRect(
-				(settings.width / 8) * i,
-				y,
-				settings.width / 8,
-				settings.height / 8
-			);
+			board.push(square);
+		}
 
-			console.log(i);
+		for (let i = 0; i < board.length; i++) {
+			let square: ISquare = board[i];
+			ctx.strokeStyle = '#000';
+			ctx.fillStyle = square.color;
+			ctx.fillRect(square.x, square.y, square.w, square.h);
 		}
 	};
 
