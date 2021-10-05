@@ -3,12 +3,6 @@
 import { Settings } from './settings';
 import { Square } from './square';
 
-export interface IBoard {
-	squares: Square[];
-}
-
-const colors: any[] = ['white', 'black'];
-
 /*
 	For each iteration increase x by the width of one square.
 	If width is greater or equal to the width of the canvas
@@ -24,6 +18,7 @@ export class Board {
 	public w: number;
 	public h: number;
 	public squares: Square[];
+	private colors: any[] = ['white', 'black'];
 
 	constructor(settings: Settings) {
 		this.x = 0;
@@ -33,11 +28,12 @@ export class Board {
 		this.w = settings.w / this.perRow;
 		this.h = settings.h / this.perRow;
 		this.squares = [];
+		this.create(settings);
 	}
 
 	create(settings: Settings) {
 		for (let i = 0; i < this.totalSquares; i++) {
-			let color = colors[0];
+			let color = this.colors[0];
 
 			let square = new Square({
 				x: this.x,
@@ -54,7 +50,7 @@ export class Board {
 				this.x = 0;
 				this.y += this.h;
 			} else {
-				colors.reverse();
+				this.colors.reverse();
 			}
 
 			this.squares.push(square);

@@ -23,14 +23,6 @@ export default function Game(): JSX.Element {
 	const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
 	const [settings, setSettings] = useState<Settings>();
 
-	const init = (): void => {
-		if (settings !== null && settings !== undefined) {
-			let board = new Board(settings);
-			board.create(settings);
-			setBoard(board);
-		}
-	};
-
 	const main = () => {
 		if (ctx !== null && board !== null) {
 			for (let i = 0; i < board.squares.length; i++) {
@@ -42,14 +34,22 @@ export default function Game(): JSX.Element {
 	};
 
 	useEffect(() => {
-		setSettings(new Settings());
 		let canvas = canvasRef.current;
 
-		if (canvas !== null && settings && settings !== undefined) {
+		if (!settings) {
+			let settings = new Settings();
+			setSettings(settings);
+		}
+
+		if (canvas && settings) {
 			canvas.width = settings.w;
 			canvas.height = settings.h;
 			setCtx(canvas.getContext('2d'));
-			return () => init();
+		}
+
+		if (!board && settings) {
+			let board = new Board(settings);
+			setBoard(board);
 		}
 	}, [canvasRef.current, settings]);
 
