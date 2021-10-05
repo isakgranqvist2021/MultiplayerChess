@@ -20,7 +20,7 @@ export class Square {
 	}
 
 	draw(ctx: CanvasRenderingContext2D): void {
-		ctx.fillStyle = this.color;
+		ctx.fillStyle = this.color === 'black' ? '#e37046' : '#fff';
 		ctx.fillRect(this.x, this.y, this.w, this.h);
 	}
 }

@@ -18,14 +18,12 @@ import classes from 'Styles/game.module.css';
 
 function createPieces(
 	settings: Settings
-): { role: string; color: 'black' | 'white'; position: number }[] {
-	let color = settings.colors[0];
+): { role: string; color: 'white' | 'black'; position: number }[] {
+	let color = 'black';
 
 	for (let i = 0; i < pieces.length; i++) {
-		pieces[i].color = color;
-
-		if (i >= 16) {
-			color = settings.colors[1];
+		if (i >= 32) {
+			color = 'white';
 		}
 
 		pieces[i].color = color;
@@ -44,6 +42,10 @@ export default function Game(): JSX.Element {
 
 	const main = () => {
 		if (ctx !== null && board !== null) {
+			if (settings) {
+				ctx.clearRect(0, 0, settings?.w, settings?.h);
+			}
+
 			for (let i = 0; i < board.squares.length; i++) {
 				board.squares[i].draw(ctx);
 			}
@@ -74,15 +76,12 @@ export default function Game(): JSX.Element {
 			let board = new Board(settings);
 			setBoard(board);
 
-			setPieces(
-				createPieces(settings).map(
-					(piece: {
-						role: string;
-						color: 'black' | 'white';
-						position: number;
-					}) => new Piece(piece)
-				)
-			);
+			let pieces = createPieces(settings)
+				.filter((piece: any) => piece.role !== 'empty')
+				.map((piece: any) => new Piece(piece));
+
+			console.log(pieces);
+			setPieces(pieces);
 		}
 	}, [canvasRef.current, settings]);
 
