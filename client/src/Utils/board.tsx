@@ -13,43 +13,43 @@ import { Square } from './square';
 export class Board {
 	private totalSquares: number;
 	private perRow: number;
-	public x: number;
-	public y: number;
-	public w: number;
-	public h: number;
 	public squares: Square[];
 	private colors: any[];
 
 	constructor(settings: Settings) {
 		this.colors = settings.colors;
-		this.x = 0;
-		this.y = 0;
 		this.totalSquares = 64;
 		this.perRow = 8;
-		this.w = settings.w / this.perRow;
-		this.h = settings.h / this.perRow;
 		this.squares = [];
 		this.create(settings);
 	}
 
 	create(settings: Settings) {
+		let w: number = settings.w / this.perRow;
+		let h: number = settings.h / this.perRow;
+		let x: number = 0;
+		let y: number = 0;
+
 		for (let i = 0; i < this.totalSquares; i++) {
 			let color = this.colors[0];
 
-			let square = new Square({
-				x: this.x,
-				y: this.y,
-				w: this.w,
-				h: this.h,
-				color: color,
-				position: i,
-			});
+			let square = new Square(
+				{
+					x: x,
+					y: y,
+					w: w,
+					h: h,
+					color: color,
+					position: i,
+				},
+				settings
+			);
 
-			this.x += this.w;
+			x += w;
 
-			if (this.x >= settings.w) {
-				this.x = 0;
-				this.y += this.h;
+			if (x >= settings.w) {
+				x = 0;
+				y += h;
 			} else {
 				this.colors.reverse();
 			}
