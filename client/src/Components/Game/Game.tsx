@@ -1,9 +1,9 @@
 /** @format */
 
-import { useRef, useEffect, MutableRefObject } from 'react';
-import { createBoard } from 'Utils/board';
-import { settings } from 'Utils/settings';
-import { ISquare } from 'Utils/types';
+import { useRef, useEffect, MutableRefObject, useState } from 'react';
+import { Board } from 'Utils/board';
+import { Settings } from 'Utils/settings';
+import { Piece } from 'Utils/pieces';
 import classes from 'Styles/game.module.css';
 
 /*
@@ -18,23 +18,23 @@ import classes from 'Styles/game.module.css';
 
 export default function Game(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
-	const board: ISquare[] = [];
-	let ctx: CanvasRenderingContext2D | null = null;
-
-	const drawPieces = (): void => {};
+	const [board, setBoard] = useState<Board | null>(null);
+	const [pieces, setPieces] = useState<Piece[]>([]);
+	const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
+	const [settings, setSettings] = useState<Settings>();
 
 	const init = (): void => {
-		board.push(...createBoard());
-		main();
+		if (settings !== null && settings !== undefined) {
+			let board = new Board(settings);
+			board.create(settings);
+			setBoard(board);
+		}
 	};
 
 	const main = () => {
-		if (ctx !== null) {
-			for (let i = 0; i < board.length; i++) {
-				let square: ISquare = board[i];
-				ctx.strokeStyle = '#000';
-				ctx.fillStyle = square.color;
-				ctx.fillRect(square.x, square.y, square.w, square.h);
+		if (ctx !== null && board !== null) {
+			for (let i = 0; i < board.squares.length; i++) {
+				board.squares[i].draw(ctx);
 			}
 		}
 
@@ -42,13 +42,20 @@ export default function Game(): JSX.Element {
 	};
 
 	useEffect(() => {
+		setSettings(new Settings());
 		let canvas = canvasRef.current;
-		canvas.width = settings.width;
-		canvas.height = settings.height;
-		ctx = canvas.getContext('2d');
 
-		return () => init();
-	}, [canvasRef]);
+		if (canvas !== null && settings && settings !== undefined) {
+			canvas.width = settings.w;
+			canvas.height = settings.h;
+			setCtx(canvas.getContext('2d'));
+			return () => init();
+		}
+	}, [canvasRef.current, settings]);
+
+	useEffect(() => {
+		main();
+	}, [board]);
 
 	return <canvas ref={canvasRef} className={classes.canvas}></canvas>;
 }

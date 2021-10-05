@@ -1,42 +1,63 @@
 /** @format */
 
-import { settings } from './settings';
-import { ISquare } from './types';
+import { Settings } from './settings';
+import { Square } from './square';
 
-const colors = ['white', 'black'];
+export interface IBoard {
+	squares: Square[];
+}
 
-export const createBoard = (): ISquare[] => {
-	const board: ISquare[] = [];
-	let squares: number = 64;
-	let perRow: number = 8;
-	let x = 0;
-	let y = 0;
+const colors: any[] = ['white', 'black'];
 
-	for (let i = 0; i < squares; i++) {
-		let width = settings.width / perRow;
-		let height = settings.height / perRow;
-		let color = colors[0];
+/*
+	For each iteration increase x by the width of one square.
+	If width is greater or equal to the width of the canvas
+	then increase y by the height of one square and reset x to zero.
+	Also, for every other row the colors should invert.
+*/
 
-		let square: ISquare = {
-			x: x,
-			y: y,
-			w: width,
-			h: height,
-			color: color,
-			square: i,
-		};
+export class Board {
+	private totalSquares: number;
+	private perRow: number;
+	public x: number;
+	public y: number;
+	public w: number;
+	public h: number;
+	public squares: Square[];
 
-		x += width;
-
-		if (x >= settings.width) {
-			x = 0;
-			y += height;
-		} else {
-			colors.reverse();
-		}
-
-		board.push(square);
+	constructor(settings: Settings) {
+		this.x = 0;
+		this.y = 0;
+		this.totalSquares = 64;
+		this.perRow = 8;
+		this.w = settings.w / this.perRow;
+		this.h = settings.h / this.perRow;
+		this.squares = [];
 	}
 
-	return board;
-};
+	create(settings: Settings) {
+		for (let i = 0; i < this.totalSquares; i++) {
+			let color = colors[0];
+
+			let square = new Square({
+				x: this.x,
+				y: this.y,
+				w: this.w,
+				h: this.h,
+				color: color,
+				position: i,
+			});
+
+			this.x += this.w;
+
+			if (this.x >= settings.w) {
+				this.x = 0;
+				this.y += this.h;
+			} else {
+				colors.reverse();
+			}
+
+			this.squares.push(square);
+		}
+	}
+}

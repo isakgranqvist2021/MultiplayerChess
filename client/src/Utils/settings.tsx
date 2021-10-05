@@ -1,6 +1,11 @@
 /** @format */
 
-export const settings = {
-	width: 800,
-	height: 800,
-};
+export class Settings {
+	public w: number;
+	public h: number;
+
+	constructor() {
+		this.w = 800;
+		this.h = 800;
+	}
+}
