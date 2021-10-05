@@ -1,64 +1,30 @@
 /** @format */
 
 import { useRef, useEffect, MutableRefObject } from 'react';
+import { createBoard } from 'Utils/board';
+import { settings } from 'Utils/settings';
+import { ISquare } from 'Utils/types';
 import classes from 'Styles/game.module.css';
 
-const settings = {
-	width: 600,
-	height: 600,
-};
+/*
+        ♖♘♗♕♔♗♘♖
+        ♙♙♙♙♙♙♙♙
+            
+              VS
 
-interface ISquare {
-	x: number;
-	y: number;
-	w: number;
-	h: number;
-	color: string;
-	square: number;
-}
-
-const colors = ['white', 'black'];
+        ♟♟♟♟♟♟♟♟
+        ♜♞♝♛♚♝♞♜
+*/
 
 export default function Game(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
 	const board: ISquare[] = [];
 	let ctx: CanvasRenderingContext2D | null = null;
 
-	const drawBoard = () => {
-		let squares: number = 64;
-		let perRow: number = 8;
-
-		let x = 0;
-		let y = 0;
-		for (let i = 0; i < squares; i++) {
-			let width = settings.width / perRow;
-			let height = settings.height / perRow;
-			let color = colors[0];
-
-			let square: ISquare = {
-				x: x,
-				y: y,
-				w: width,
-				h: height,
-				color: color,
-				square: i,
-			};
-
-			x += width;
-
-			if (x >= settings.width) {
-				x = 0;
-				y += height;
-			} else {
-				colors.reverse();
-			}
-
-			board.push(square);
-		}
-	};
+	const drawPieces = (): void => {};
 
 	const init = (): void => {
-		drawBoard();
+		board.push(...createBoard());
 		main();
 	};
 
@@ -79,9 +45,7 @@ export default function Game(): JSX.Element {
 		let canvas = canvasRef.current;
 		canvas.width = settings.width;
 		canvas.height = settings.height;
-
 		ctx = canvas.getContext('2d');
-		init();
 
 		return () => init();
 	}, [canvasRef]);
