@@ -46,12 +46,19 @@ interface IPiece {
 	position: number;
 }
 
+const setAvailable = (role: string) => {};
+
 export class Piece {
 	public role: string;
 	public position = 0;
 	public color: string;
 	public img_path: string = '';
 	public img: HTMLImageElement | null = null;
+	public hasMoved: boolean = false;
+	public captured: boolean = false;
+
+	public available: number[] = [];
+
 	private row: number = 0;
 	private col: number = 0;
 
@@ -64,12 +71,34 @@ export class Piece {
 		this.img.src = this.img_path;
 	}
 
-	draw(ctx: CanvasRenderingContext2D): void {
-		this.row = Math.floor(this.position / 8);
-		this.col = this.position % 8;
+	move(to: number) {
+		if (this.available.includes(to)) {
+			this.position = to;
+			this.hasMoved = true;
+		}
+	}
 
-		if (this.img) {
-			ctx.drawImage(this.img, this.col * 100 + 25, this.row * 100 + 25);
+	capture(pieces: Piece[], index: number): boolean {
+		if (index >= 0) {
+			pieces.splice(index, 1);
+			return true;
+		}
+
+		return false;
+	}
+
+	draw(ctx: CanvasRenderingContext2D): void {
+		if (!this.captured) {
+			this.row = Math.floor(this.position / 8);
+			this.col = this.position % 8;
+
+			if (this.img) {
+				ctx.drawImage(
+					this.img,
+					this.col * 100 + 25,
+					this.row * 100 + 25
+				);
+			}
 		}
 	}
 }

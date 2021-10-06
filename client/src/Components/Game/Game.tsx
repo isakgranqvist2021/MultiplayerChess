@@ -17,6 +17,8 @@ import { Square } from 'Utils/square';
         ♜♞♝♛♚♝♞♜
 */
 
+const captured = [];
+
 const player = {
 	color: 'white',
 };
@@ -63,14 +65,13 @@ export default function Game(): JSX.Element {
 		const x = e.nativeEvent.offsetX;
 		const y = e.nativeEvent.offsetY;
 
-		let clickedSquare: any;
-
+		let clickedSquare: Square | undefined;
 		let selectedSquare = board.squares.find(
 			(square: Square) => square.selected
 		);
 
 		for (let i = 0; i < board.squares.length; i++) {
-			let square = board.squares[i];
+			let square: Square = board.squares[i];
 
 			let squareFound =
 				x > square.x &&
@@ -79,14 +80,10 @@ export default function Game(): JSX.Element {
 				y < square.y + square.h;
 
 			if (squareFound && !selectedSquare) {
-				let pieceOnSquare = pieces.find(
-					(piece: Piece) => piece.position === square.position
-				);
-				if (pieceOnSquare?.color === player.color) {
-					square.selected = true;
-				} else {
-					return;
-				}
+				let comparefn = (p: Piece) => p.position === square.position;
+				let p = pieces.find(comparefn);
+				if (!p) return;
+				if (p.color === player.color) square.selected = true;
 			}
 
 			if (squareFound) {
@@ -94,26 +91,26 @@ export default function Game(): JSX.Element {
 			}
 		}
 
-		let piece = pieces.find(
-			(piece: Piece) => piece.position === selectedSquare?.position
-		);
+		let comparefn = (p: Piece) => p.position === selectedSquare?.position;
+		let piece = pieces.find(comparefn);
 
-		if (piece) {
+		if (piece && clickedSquare) {
 			removeSelected();
 
-			let index = pieces.findIndex(
-				(piece: Piece) => piece.position === clickedSquare.position
-			);
+			let comparefn = (p: Piece) =>
+				clickedSquare && p.position === clickedSquare.position;
 
-			if (index > 0 && pieces[index].color === player.color) {
-				return;
+			let index = pieces.findIndex(comparefn);
+			if (index >= 0 && pieces[index].color === player.color) return;
+
+			if (piece.capture(pieces, index)) {
+				captured.push({
+					piece: pieces[index],
+					by: player.color,
+				});
 			}
 
-			if (index > 0) {
-				pieces.splice(index, 1);
-			}
-
-			piece.position = clickedSquare.position;
+			piece.move(clickedSquare.position);
 		}
 	};
 
