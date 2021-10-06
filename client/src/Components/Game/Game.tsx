@@ -1,6 +1,6 @@
 /** @format */
 
-import { useRef, useEffect, MutableRefObject, useState } from 'react';
+import { useRef, useEffect, MutableRefObject } from 'react';
 import { Board } from 'Utils/board';
 import { Settings } from 'Utils/settings';
 import { Piece, pieces } from 'Utils/piece';
@@ -40,43 +40,53 @@ function createPieces(): {
 
 export default function Game(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
-	const [board, setBoard] = useState<Board | null>(null);
-	const [pieces, setPieces] = useState<Piece[]>([]);
-	const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
-	const [settings, setSettings] = useState<Settings>();
+
+	const settings: Settings = new Settings();
+	const board: Board = new Board(settings);
+	const pieces: Piece[] = createPieces().map(
+		(piece: any) => new Piece(piece)
+	);
+
+	let ctx: CanvasRenderingContext2D | null = null;
+
+	const removeSelected = (): void => {
+		if (board) {
+			for (let i = 0; i < board.squares.length; i++) {
+				board.squares[i].selected = false;
+			}
+		}
+	};
 
 	const eventHandler = (e: any) => {
 		const x = e.nativeEvent.offsetX,
 			y = e.nativeEvent.offsetY;
 
 		if (board) {
+			let clickedSquare: any;
+
 			for (let i = 0; i < board.squares.length; i++) {
 				let square = board.squares[i];
 
-				let clicked =
+				let squareFound =
 					x > square.x &&
 					x < square.x + square.w &&
 					y > square.y &&
 					y < square.y + square.h;
 
-				if (!clicked) square.selected = false;
-
-				if (clicked && square.selected) {
-					return (square.selected = false);
+				if (squareFound) {
+					clickedSquare = square;
 				}
+			}
 
-				if (clicked && !square.selected) {
-					for (let j = 0; j < board.squares.length; j++) {
-						board.squares[i].selected = false;
-					}
+			if (clickedSquare) {
+				removeSelected();
 
-					let piece = pieces.find(
-						(piece: Piece) => piece.position === square.position
-					);
+				let pieceOnSquare = pieces.some(
+					(piece: Piece) => piece.position === clickedSquare.position
+				);
 
-					if (piece) {
-						square.selected = true;
-					}
+				if (pieceOnSquare) {
+					clickedSquare.selected = true;
 				}
 			}
 		}
@@ -103,28 +113,13 @@ export default function Game(): JSX.Element {
 	useEffect(() => {
 		let canvas = canvasRef.current;
 
-		if (!settings) {
-			let settings = new Settings();
-			setSettings(settings);
-		}
-
 		if (canvas && settings) {
 			canvas.width = settings.w;
 			canvas.height = settings.h;
-			setCtx(canvas.getContext('2d'));
-		}
-
-		if (!board && settings) {
-			let board = new Board(settings);
-			setBoard(board);
-			let pieces = createPieces().map((piece: any) => new Piece(piece));
-			setPieces(pieces);
+			ctx = canvas.getContext('2d');
+			main();
 		}
 	}, [canvasRef.current, settings]);
-
-	useEffect(() => {
-		main();
-	}, [board]);
 
 	return (
 		<canvas
