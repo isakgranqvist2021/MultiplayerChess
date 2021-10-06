@@ -17,6 +17,10 @@ import { Square } from 'Utils/square';
         ♜♞♝♛♚♝♞♜
 */
 
+const player = {
+	color: 'white',
+};
+
 function createPieces(): {
 	role: string;
 	color: 'white' | 'black';
@@ -61,6 +65,10 @@ export default function Game(): JSX.Element {
 
 		let clickedSquare: any;
 
+		let selectedSquare = board.squares.find(
+			(square: Square) => square.selected
+		);
+
 		for (let i = 0; i < board.squares.length; i++) {
 			let square = board.squares[i];
 
@@ -70,14 +78,42 @@ export default function Game(): JSX.Element {
 				y > square.y &&
 				y < square.y + square.h;
 
-			if (squareFound) {
-				let p = pieces.find(
-					(p: Piece) => square.position === p.position
+			if (squareFound && !selectedSquare) {
+				let pieceOnSquare = pieces.find(
+					(piece: Piece) => piece.position === square.position
 				);
-				if (p) {
-					p.position = 34;
+				if (pieceOnSquare?.color === player.color) {
+					square.selected = true;
+				} else {
+					return;
 				}
 			}
+
+			if (squareFound) {
+				clickedSquare = square;
+			}
+		}
+
+		let piece = pieces.find(
+			(piece: Piece) => piece.position === selectedSquare?.position
+		);
+
+		if (piece) {
+			removeSelected();
+
+			let index = pieces.findIndex(
+				(piece: Piece) => piece.position === clickedSquare.position
+			);
+
+			if (index > 0 && pieces[index].color === player.color) {
+				return;
+			}
+
+			if (index > 0) {
+				pieces.splice(index, 1);
+			}
+
+			piece.position = clickedSquare.position;
 		}
 	};
 

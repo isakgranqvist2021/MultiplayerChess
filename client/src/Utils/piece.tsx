@@ -40,8 +40,6 @@ export const pieces: any[] = [
 	{ role: 'rook' },
 ];
 
-let drawState = 0;
-
 interface IPiece {
 	role: string;
 	color: 'black' | 'white';
@@ -68,14 +66,10 @@ export class Piece {
 
 	draw(ctx: CanvasRenderingContext2D): void {
 		this.row = Math.floor(this.position / 8);
-		this.col = Math.floor(this.position / 8);
-
-		console.log(this.position);
+		this.col = this.position % 8;
 
 		if (this.img) {
-			ctx.drawImage(this.img, this.col * 125, this.row * 125);
-
-			drawState++;
+			ctx.drawImage(this.img, this.col * 100 + 25, this.row * 100 + 25);
 		}
 	}
 }
