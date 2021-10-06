@@ -5,6 +5,7 @@ import { Board } from 'Utils/board';
 import { Settings } from 'Utils/settings';
 import { Piece, pieces } from 'Utils/piece';
 import classes from 'Styles/game.module.css';
+import { Square } from 'Utils/square';
 
 /*
         ♖♘♗♕♔♗♘♖
@@ -40,7 +41,6 @@ function createPieces(): {
 
 export default function Game(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
-
 	const settings: Settings = new Settings();
 	const board: Board = new Board(settings);
 	const pieces: Piece[] = createPieces().map(
@@ -50,53 +50,40 @@ export default function Game(): JSX.Element {
 	let ctx: CanvasRenderingContext2D | null = null;
 
 	const removeSelected = (): void => {
-		if (board) {
-			for (let i = 0; i < board.squares.length; i++) {
-				board.squares[i].selected = false;
-			}
+		for (let i = 0; i < board.squares.length; i++) {
+			board.squares[i].selected = false;
 		}
 	};
 
 	const eventHandler = (e: any) => {
-		const x = e.nativeEvent.offsetX,
-			y = e.nativeEvent.offsetY;
+		const x = e.nativeEvent.offsetX;
+		const y = e.nativeEvent.offsetY;
 
-		if (board) {
-			let clickedSquare: any;
+		let clickedSquare: any;
 
-			for (let i = 0; i < board.squares.length; i++) {
-				let square = board.squares[i];
+		for (let i = 0; i < board.squares.length; i++) {
+			let square = board.squares[i];
 
-				let squareFound =
-					x > square.x &&
-					x < square.x + square.w &&
-					y > square.y &&
-					y < square.y + square.h;
+			let squareFound =
+				x > square.x &&
+				x < square.x + square.w &&
+				y > square.y &&
+				y < square.y + square.h;
 
-				if (squareFound) {
-					clickedSquare = square;
-				}
-			}
-
-			if (clickedSquare) {
-				removeSelected();
-
-				let pieceOnSquare = pieces.some(
-					(piece: Piece) => piece.position === clickedSquare.position
+			if (squareFound) {
+				let p = pieces.find(
+					(p: Piece) => square.position === p.position
 				);
-
-				if (pieceOnSquare) {
-					clickedSquare.selected = true;
+				if (p) {
+					p.position = 34;
 				}
 			}
 		}
 	};
 
 	const main = () => {
-		if (ctx !== null && board !== null) {
-			if (settings) {
-				ctx.clearRect(0, 0, settings?.w, settings?.h);
-			}
+		if (ctx !== null) {
+			ctx.clearRect(0, 0, settings.w, settings.h);
 
 			for (let i = 0; i < board.squares.length; i++) {
 				board.squares[i].draw(ctx);
