@@ -16,9 +16,11 @@ import classes from 'Styles/game.module.css';
         ♜♞♝♛♚♝♞♜
 */
 
-function createPieces(
-	settings: Settings
-): { role: string; color: 'white' | 'black'; position: number }[] {
+function createPieces(): {
+	role: string;
+	color: 'white' | 'black';
+	position: number;
+}[] {
 	let color = 'black';
 
 	for (let i = 0; i < pieces.length; i++) {
@@ -57,8 +59,24 @@ export default function Game(): JSX.Element {
 					y > square.y &&
 					y < square.y + square.h;
 
-				if (clicked) {
-					console.log(square.position);
+				if (!clicked) square.selected = false;
+
+				if (clicked && square.selected) {
+					return (square.selected = false);
+				}
+
+				if (clicked && !square.selected) {
+					for (let j = 0; j < board.squares.length; j++) {
+						board.squares[i].selected = false;
+					}
+
+					let piece = pieces.find(
+						(piece: Piece) => piece.position === square.position
+					);
+
+					if (piece) {
+						square.selected = true;
+					}
 				}
 			}
 		}
@@ -99,11 +117,7 @@ export default function Game(): JSX.Element {
 		if (!board && settings) {
 			let board = new Board(settings);
 			setBoard(board);
-
-			let pieces = createPieces(settings).map(
-				(piece: any) => new Piece(piece)
-			);
-			console.log(board);
+			let pieces = createPieces().map((piece: any) => new Piece(piece));
 			setPieces(pieces);
 		}
 	}, [canvasRef.current, settings]);

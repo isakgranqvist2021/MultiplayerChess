@@ -1,7 +1,5 @@
 /** @format */
 
-import { Square } from './square';
-
 /*
 	total pieces = 32
 */
@@ -44,6 +42,12 @@ export const pieces: any[] = [
 
 let drawState = 0;
 
+interface IPiece {
+	role: string;
+	color: 'black' | 'white';
+	position: number;
+}
+
 export class Piece {
 	public role: string;
 	public position = 0;
@@ -52,11 +56,7 @@ export class Piece {
 	public img: HTMLImageElement | null = null;
 	private row: number = 0;
 
-	constructor(piece: {
-		role: string;
-		color: 'black' | 'white';
-		position: number;
-	}) {
+	constructor(piece: IPiece) {
 		this.role = piece.role;
 		this.color = piece.color;
 		this.position = piece.position;

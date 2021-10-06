@@ -9,6 +9,7 @@ export class Square {
 	public h: number;
 	public color: string;
 	public position: number;
+	public selected: boolean = false;
 	private settings: Settings;
 
 	constructor(square: any, settings: Settings) {
@@ -22,7 +23,13 @@ export class Square {
 	}
 
 	draw(ctx: CanvasRenderingContext2D): void {
-		ctx.fillStyle = this.color === 'black' ? '#e37046' : '#fff';
+		let fillColor = this.color === 'black' ? '#e37046' : '#fff';
+
+		if (this.selected) {
+			fillColor = '#415245';
+		}
+
+		ctx.fillStyle = fillColor;
 		ctx.fillRect(this.x, this.y, this.w, this.h);
 
 		if (this.settings.debug) {
