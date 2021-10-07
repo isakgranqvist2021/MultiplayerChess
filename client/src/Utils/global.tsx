@@ -9,31 +9,58 @@ export const player = {
 
 export let pieces: Piece[] = [];
 
-const pawn = (piece: any) => {
-	let moves = [];
+// ♙♙♙♙♙♙♙♙♙♙♙♙♙♙
+const pawn = (piece: any): number[] => {
+	let moves: number[] = [];
+
+	let nWest = piece.position - 8 - 1;
+	let nEast = piece.position - 8 + 1;
 
 	let filteredPieces = pieces.filter((p: Piece) => {
 		return !p.captured && p.color !== player.color;
 	});
 
-	console.log(filteredPieces);
-
-	let takeLeft = filteredPieces.find((p: Piece) => {
-		return p.position === piece.position - 8 - 1;
-	});
-
-	let takeRight = filteredPieces.find((p: Piece) => {
-		return p.position === piece.position - 8 + 1;
-	});
+	let takeLeft = filteredPieces.find((p: Piece) => p.position === nWest);
+	let takeRight = filteredPieces.find((p: Piece) => p.position === nEast);
 
 	if (!piece.hasMoved) moves.push(piece.position - 8 * 2);
 
-	if (takeLeft) moves.push(piece.position - 8 - 1);
-	if (takeRight) moves.push(piece.position - 8 + 1);
+	if (takeLeft) moves.push(nWest);
+	if (takeRight && nEast > 0) moves.push(nEast);
 
-	if (!pieces.find((p: Piece) => p.position === piece.position - 8))
+	if (!filteredPieces.find((p: Piece) => p.position === piece.position - 8))
 		moves.push(piece.position - 8);
 
+	return moves;
+};
+
+// ♖♖♖♖♖♖♖♖♖♖♖♖♖♖
+const rook = (piece: any): number[] => {
+	let moves: number[] = [];
+	return moves;
+};
+
+// ♘♘♘♘♘♘♘♘♘♘♘♘♘♘
+const knight = (piece: any): number[] => {
+	let moves: number[] = [];
+	return moves;
+};
+
+// ♗♗♗♗♗♗♗♗♗♗♗♗♗♗
+const bishop = (piece: any): number[] => {
+	let moves: number[] = [];
+	return moves;
+};
+
+// ♕♕♕♕♕♕♕♕♕♕♕♕♕♕
+const queen = (piece: any): number[] => {
+	let moves: number[] = [];
+	return moves;
+};
+
+// ♔♔♔♔♔♔♔♔♔♔♔♔♔♔
+const king = (piece: any): number[] => {
+	let moves: number[] = [];
 	return moves;
 };
 
@@ -41,6 +68,22 @@ export const setAvailable = (piece: any): number[] => {
 	switch (piece.role) {
 		case 'pawn':
 			return pawn(piece);
+
+		case 'rook':
+			return rook(piece);
+
+		case 'knight':
+			return knight(piece);
+
+		case 'bishop':
+			return bishop(piece);
+
+		case 'queen':
+			return queen(piece);
+
+		case 'king':
+			return king(piece);
+
 		default:
 			return [];
 	}
