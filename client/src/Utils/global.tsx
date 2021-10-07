@@ -11,25 +11,23 @@ export let pieces: Piece[] = [];
 
 // ♙♙♙♙♙♙♙♙♙♙♙♙♙♙
 const pawn = (piece: any): number[] => {
-	let moves: number[] = [];
-
-	let nWest = piece.position - 8 - 1;
-	let nEast = piece.position - 8 + 1;
-
-	let filteredPieces = pieces.filter((p: Piece) => {
+	// only allow moves on pieces that has same color as player and that has not been captured
+	let fp = pieces.filter((p: Piece) => {
 		return !p.captured && p.color !== player.color;
 	});
 
-	let takeLeft = filteredPieces.find((p: Piece) => p.position === nWest);
-	let takeRight = filteredPieces.find((p: Piece) => p.position === nEast);
+	let moves: number[] = [];
+	let nWest = piece.position - settings.perRow - 1;
+	let nEast = piece.position - settings.perRow + 1;
 
-	if (!piece.hasMoved) moves.push(piece.position - 8 * 2);
+	let pieceAhead = fp.find((p: Piece) => p.position === piece.position - 8);
+	let takeNWest = fp.find((p: Piece) => p.position === nWest);
+	let takeNEast = fp.find((p: Piece) => p.position === nEast);
 
-	if (takeLeft) moves.push(nWest);
-	if (takeRight && nEast > 0) moves.push(nEast);
-
-	if (!filteredPieces.find((p: Piece) => p.position === piece.position - 8))
-		moves.push(piece.position - 8);
+	if (!piece.hasMoved) moves.push(piece.position - settings.perRow * 2);
+	if (takeNWest) moves.push(nWest);
+	if (takeNEast && nEast > 0) moves.push(nEast);
+	if (!pieceAhead) moves.push(piece.position - settings.perRow);
 
 	return moves;
 };

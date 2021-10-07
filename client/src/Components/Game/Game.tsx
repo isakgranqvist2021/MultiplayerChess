@@ -32,20 +32,25 @@ export default function Game(): JSX.Element {
 		
 		if a piece is staged for movement and new piece undefined then just move
 		if a piece is staged for movement and new piece has opposite color to player then capture
-		if a piece is staged for movement and new piece is same color then switch piece that is staged for movement
+		if a piece is staged for movement and new piece is same color then switch staged piece
 	*/
 
-	const selectPiece = (squarePosition: number) => {
+	const selectPiece = (squarePosition: number): void => {
 		let piece: Piece | undefined = findPieceWithSquare(squarePosition);
-		let clickedSameTwice =
-			piece &&
-			lastClickedPiece &&
+
+		let isOfPlayerColor: boolean =
+			piece !== undefined && piece.color === player.color;
+
+		let clickedSameTwice: boolean =
+			piece !== undefined &&
+			lastClickedPiece !== undefined &&
 			piece.position === lastClickedPiece.position;
 
 		if (clickedSameTwice && piece && lastClickedPiece) {
 			piece.selected = false;
 			lastClickedPiece.selected = false;
-			return (lastClickedPiece = undefined);
+			lastClickedPiece = undefined;
+			return;
 		}
 
 		if (lastClickedPiece) {
@@ -54,17 +59,19 @@ export default function Game(): JSX.Element {
 
 		if (piece && lastClickedPiece && piece.color !== player.color) {
 			lastClickedPiece.capture(piece);
-			return movePiece(squarePosition);
+			movePiece(squarePosition);
+			return;
 		}
 
-		if (piece) {
+		if (piece && isOfPlayerColor) {
 			piece.selected = true;
 			lastClickedPiece = piece;
 			lastClickedPiece.available = setAvailable(lastClickedPiece);
 		}
 
 		if (!piece && lastClickedPiece) {
-			return movePiece(squarePosition);
+			movePiece(squarePosition);
+			return;
 		}
 	};
 
