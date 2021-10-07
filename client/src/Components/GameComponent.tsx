@@ -1,14 +1,14 @@
 /** @format */
 
-import settings from 'Utils/settings';
+import settings from 'Game/settings';
 
 import classes from 'Styles/game.module.css';
 
 import { useRef, useEffect, MutableRefObject } from 'react';
-import { Board } from 'Utils/board';
-import { Piece } from 'Utils/piece';
-import { Square } from 'Utils/square';
-import { setAvailable, pieces, player } from 'Utils/global';
+import { Board } from 'Game/board';
+import { Piece } from 'Game/piece';
+import { Square } from 'Game/square';
+import { setAvailable, pieces, player } from 'Game/global';
 
 /*
         ♖♘♗♕♔♗♘♖
@@ -20,7 +20,7 @@ import { setAvailable, pieces, player } from 'Utils/global';
         ♜♞♝♛♚♝♞♜
 */
 
-export default function Game(): JSX.Element {
+export default function GameComponent(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
 	const board: Board = new Board();
 
