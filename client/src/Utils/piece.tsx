@@ -29,6 +29,7 @@ export class Piece {
 		if (this.available.includes(to)) {
 			this.position = to;
 			this.hasMoved = true;
+			this.selected = false;
 		}
 	}
 

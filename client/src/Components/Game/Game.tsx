@@ -2,12 +2,13 @@
 
 import settings from 'Utils/settings';
 
+import classes from 'Styles/game.module.css';
+
 import { useRef, useEffect, MutableRefObject } from 'react';
 import { Board } from 'Utils/board';
 import { Piece } from 'Utils/piece';
-import classes from 'Styles/game.module.css';
 import { Square } from 'Utils/square';
-import { setAvailable } from 'Utils/utils';
+import { player, setAvailable, pieces } from 'Utils/global';
 
 /*
         ♖♘♗♕♔♗♘♖
@@ -19,64 +20,37 @@ import { setAvailable } from 'Utils/utils';
         ♜♞♝♛♚♝♞♜
 */
 
-const player = {
-	color: 'white',
-};
-
-function createPieces(): Piece[] {
-	let tp = settings.totalSquares / 2; // total pieces
-
-	let pieces = new Array(tp).fill(0).map((p: any, i: number) => {
-		let role = 'pawn';
-
-		let isRook = i === 0 || i === 7 || i === 24 || i === 31;
-		let isKnight = i === 1 || i === 6 || i === 25 || i === 30;
-		let isBishop = i === 2 || i === 5 || i === 26 || i === 29;
-		let isQueen = i === 3 || i === 27;
-		let isKing = i === 4 || i === 28;
-
-		if (isRook) role = 'rook';
-		if (isKnight) role = 'knight';
-		if (isBishop) role = 'bishop';
-		if (isQueen) role = 'queen';
-		if (isKing) role = 'king';
-
-		let piece = new Piece({
-			color: i >= tp / 2 ? 'white' : 'black',
-			role: role,
-			position: i >= tp / 2 ? i + tp : i,
-		});
-
-		return piece;
-	});
-
-	return pieces.map((piece: Piece) => {
-		piece.available = setAvailable(
-			{ ...piece, hasMoved: false },
-			pieces,
-			player.color
-		);
-		return piece;
-	});
-}
-
 export default function Game(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
 	const board: Board = new Board();
-	const pieces: Piece[] = createPieces();
 
 	let ctx: CanvasRenderingContext2D | null = null;
 	let lastClickedPiece: Piece | undefined;
 
-	const selectPiece = (piece: Piece | undefined) => {
-		if (piece === undefined) return;
+	/*
+		stage piece for movement if piece color is same as player color
+		
+		if a piece is staged for movement and new piece undefined then just move
+		if a piece is staged for movement and new piece has opposite color to player then capture
+		if a piece is staged for movement and new piece is same color then switch piece that is staged for movement
+	*/
+
+	const selectPiece = (squarePosition: number) => {
+		let piece: Piece | undefined = findPieceWithSquare(squarePosition);
 
 		if (lastClickedPiece) {
 			lastClickedPiece.selected = false;
 		}
 
-		piece.selected = true;
-		lastClickedPiece = piece;
+		if (piece) {
+			piece.selected = true;
+			lastClickedPiece = piece;
+		}
+
+		if (!piece && lastClickedPiece) {
+			lastClickedPiece.move(squarePosition);
+			lastClickedPiece.available = setAvailable(lastClickedPiece);
+		}
 	};
 
 	const movePiece = (move: any) => {};
@@ -102,9 +76,7 @@ export default function Game(): JSX.Element {
 				y > square.y &&
 				y < square.y + square.h;
 
-			if (match) {
-				return selectPiece(findPieceWithSquare(square.position));
-			}
+			if (match) return selectPiece(square.position);
 		}
 	};
 
@@ -113,7 +85,7 @@ export default function Game(): JSX.Element {
 			ctx.clearRect(0, 0, settings.w, settings.h);
 
 			for (let i = 0; i < board.squares.length; i++) {
-				board.squares[i].draw(ctx);
+				board.squares[i].draw(ctx, lastClickedPiece);
 			}
 
 			for (let i = 0; i < pieces.length; i++) {

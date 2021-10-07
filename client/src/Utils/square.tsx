@@ -1,5 +1,6 @@
 /** @format */
 
+import { Piece } from './piece';
 import settings from './settings';
 
 export class Square {
@@ -19,8 +20,19 @@ export class Square {
 		this.position = square.position;
 	}
 
-	draw(ctx: CanvasRenderingContext2D): void {
+	draw(
+		ctx: CanvasRenderingContext2D,
+		lastClickedPiece: Piece | undefined
+	): void {
 		let fillColor = this.color === 'black' ? '#e37046' : '#fff';
+
+		let isAvailable =
+			lastClickedPiece &&
+			lastClickedPiece.available.includes(this.position);
+
+		if (isAvailable) {
+			fillColor = '#0059ff';
+		}
 
 		ctx.fillStyle = fillColor;
 		ctx.fillRect(this.x, this.y, this.w, this.h);
