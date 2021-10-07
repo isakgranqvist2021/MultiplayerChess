@@ -16,6 +16,8 @@ export class Board {
 	public captured: { piece: Piece; color: string }[] = [];
 
 	constructor() {
+		this.squares = [];
+		this.captured = [];
 		this.create();
 	}
 

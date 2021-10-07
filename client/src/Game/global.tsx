@@ -1,6 +1,8 @@
 /** @format */
 
 import { Piece } from './piece';
+import { pawn, rook, knight, bishop, queen, king } from './movement';
+
 import settings from './settings';
 
 export const player = {
@@ -8,59 +10,6 @@ export const player = {
 };
 
 export let pieces: Piece[] = [];
-
-// ♙♙♙♙♙♙♙♙♙♙♙♙♙♙
-const pawn = (piece: any): number[] => {
-	// only allow moves on pieces that has same color as player and that has not been captured
-	let fp = pieces.filter((p: Piece) => {
-		return !p.captured && p.color !== player.color;
-	});
-
-	let moves: number[] = [];
-	let nWest = piece.position - settings.perRow - 1;
-	let nEast = piece.position - settings.perRow + 1;
-
-	let pieceAhead = fp.find((p: Piece) => p.position === piece.position - 8);
-	let takeNWest = fp.find((p: Piece) => p.position === nWest);
-	let takeNEast = fp.find((p: Piece) => p.position === nEast);
-
-	if (!piece.hasMoved) moves.push(piece.position - settings.perRow * 2);
-	if (takeNWest) moves.push(nWest);
-	if (takeNEast && nEast > 0) moves.push(nEast);
-	if (!pieceAhead) moves.push(piece.position - settings.perRow);
-
-	return moves;
-};
-
-// ♖♖♖♖♖♖♖♖♖♖♖♖♖♖
-const rook = (piece: any): number[] => {
-	let moves: number[] = [];
-	return moves;
-};
-
-// ♘♘♘♘♘♘♘♘♘♘♘♘♘♘
-const knight = (piece: any): number[] => {
-	let moves: number[] = [];
-	return moves;
-};
-
-// ♗♗♗♗♗♗♗♗♗♗♗♗♗♗
-const bishop = (piece: any): number[] => {
-	let moves: number[] = [];
-	return moves;
-};
-
-// ♕♕♕♕♕♕♕♕♕♕♕♕♕♕
-const queen = (piece: any): number[] => {
-	let moves: number[] = [];
-	return moves;
-};
-
-// ♔♔♔♔♔♔♔♔♔♔♔♔♔♔
-const king = (piece: any): number[] => {
-	let moves: number[] = [];
-	return moves;
-};
 
 export const setAvailable = (piece: any): number[] => {
 	switch (piece.role) {
@@ -87,7 +36,7 @@ export const setAvailable = (piece: any): number[] => {
 	}
 };
 
-function createPieces(): Piece[] {
+export function createPieces(): Piece[] {
 	let tp = settings.totalSquares / 2; // total pieces
 
 	let pieces = new Array(tp).fill(0).map((p: any, i: number) => {
@@ -120,4 +69,8 @@ function createPieces(): Piece[] {
 	});
 }
 
-pieces = createPieces();
+export function resetPieces() {
+	pieces = createPieces();
+}
+
+resetPieces();

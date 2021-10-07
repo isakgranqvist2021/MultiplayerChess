@@ -8,7 +8,7 @@ import { useRef, useEffect, MutableRefObject } from 'react';
 import { Board } from 'Game/board';
 import { Piece } from 'Game/piece';
 import { Square } from 'Game/square';
-import { setAvailable, pieces, player } from 'Game/global';
+import { setAvailable, pieces, player, resetPieces } from 'Game/global';
 
 /*
         ♖♘♗♕♔♗♘♖
@@ -22,10 +22,17 @@ import { setAvailable, pieces, player } from 'Game/global';
 
 export default function GameComponent(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
-	const board: Board = new Board();
+	let board: Board = new Board();
 
 	let ctx: CanvasRenderingContext2D | null = null;
 	let lastClickedPiece: Piece | undefined;
+
+	const start = () => {
+		board = new Board();
+		lastClickedPiece = undefined;
+
+		resetPieces();
+	};
 
 	/*
 		stage piece for movement if piece color is same as player color
@@ -134,9 +141,12 @@ export default function GameComponent(): JSX.Element {
 	}, [canvasRef.current, settings]);
 
 	return (
-		<canvas
-			ref={canvasRef}
-			className={classes.canvas}
-			onClick={eventHandler}></canvas>
+		<div className={classes.game}>
+			<button onClick={start}>Reset Board</button>
+			<canvas
+				ref={canvasRef}
+				className={classes.canvas}
+				onClick={eventHandler}></canvas>
+		</div>
 	);
 }
