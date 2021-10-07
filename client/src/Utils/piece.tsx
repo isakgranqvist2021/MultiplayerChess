@@ -5,15 +5,17 @@ import settings from './settings';
 export class Piece {
 	public role: string;
 	public color: string;
-	public position = 0;
+	public position: number = 0;
 	public selected: boolean = false;
 
 	public img: HTMLImageElement | null = null;
 	public src: string;
 
 	public hasMoved: boolean = false;
+	public captured: boolean = false;
 
 	public available: number[] = [];
+	public captures: Piece[] = [];
 
 	constructor(piece: any) {
 		this.role = piece.role;
@@ -33,13 +35,11 @@ export class Piece {
 		}
 	}
 
-	capture(pieces: Piece[], index: number): boolean {
-		if (index >= 0 && this.available.includes(index)) {
-			pieces.splice(index, 1);
-			return true;
+	capture(piece: Piece) {
+		if (this.available.includes(piece.position)) {
+			piece.captured = true;
+			this.captures.push(piece);
 		}
-
-		return false;
 	}
 
 	imgSrc(): string {
@@ -51,6 +51,8 @@ export class Piece {
 	}
 
 	draw(ctx: CanvasRenderingContext2D): void {
+		if (this.captured) return;
+
 		let row = Math.floor(this.position / settings.perRow);
 		let col = this.position % settings.perCol;
 

@@ -8,7 +8,7 @@ import { useRef, useEffect, MutableRefObject } from 'react';
 import { Board } from 'Utils/board';
 import { Piece } from 'Utils/piece';
 import { Square } from 'Utils/square';
-import { player, setAvailable, pieces } from 'Utils/global';
+import { setAvailable, pieces, player } from 'Utils/global';
 
 /*
         ♖♘♗♕♔♗♘♖
@@ -37,30 +37,40 @@ export default function Game(): JSX.Element {
 
 	const selectPiece = (squarePosition: number) => {
 		let piece: Piece | undefined = findPieceWithSquare(squarePosition);
+		let hasCaptured: boolean = false;
 
 		if (lastClickedPiece) {
 			lastClickedPiece.selected = false;
 		}
 
-		if (piece) {
+		if (piece && lastClickedPiece && piece.color !== player.color) {
+			lastClickedPiece.capture(piece);
+			movePiece(squarePosition);
+			hasCaptured = true;
+		}
+
+		if (piece && !hasCaptured) {
 			piece.selected = true;
 			lastClickedPiece = piece;
 		}
 
 		if (!piece && lastClickedPiece) {
-			lastClickedPiece.move(squarePosition);
-			lastClickedPiece.available = setAvailable(lastClickedPiece);
+			movePiece(squarePosition);
 		}
 	};
 
-	const movePiece = (move: any) => {};
-
-	const findSquareWithPiece = (position: number) => {
-		return board.squares.find((s: Square) => s.position === position);
+	const movePiece = (squarePosition: number) => {
+		if (lastClickedPiece) {
+			lastClickedPiece.move(squarePosition);
+			lastClickedPiece.available = setAvailable(lastClickedPiece);
+			lastClickedPiece = undefined;
+		}
 	};
 
 	const findPieceWithSquare = (position: number) => {
-		return pieces.find((p: Piece) => p.position === position);
+		return pieces
+			.filter((p: Piece) => !p.captured)
+			.find((p: Piece) => p.position === position);
 	};
 
 	const eventHandler = (e: any) => {
