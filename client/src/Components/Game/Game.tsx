@@ -51,7 +51,11 @@ function createPieces(): Piece[] {
 	});
 
 	return pieces.map((piece: Piece) => {
-		piece.available = setAvailable({ ...piece, hasMoved: false }, pieces);
+		piece.available = setAvailable(
+			{ ...piece, hasMoved: false },
+			pieces,
+			player.color
+		);
 		return piece;
 	});
 }
@@ -62,65 +66,27 @@ export default function Game(): JSX.Element {
 	const pieces: Piece[] = createPieces();
 
 	let ctx: CanvasRenderingContext2D | null = null;
+	let lastClickedPiece: Piece | undefined;
 
-	const selectedSquare = () => {
-		let prevSquare = board.squares.find(
-			(square: Square) => square.selected
-		);
+	const selectPiece = (piece: Piece | undefined) => {
+		if (piece === undefined) return;
 
-		let prevPiece = pieces.find(
-			(piece: Piece) => piece.position === prevSquare?.position
-		);
-
-		return {
-			square: prevSquare,
-			piece: prevPiece,
-		};
-	};
-
-	let prev: {
-		square: Square | undefined;
-		piece: Piece | undefined;
-	};
-
-	let move: { from: Square | undefined; to: Square | undefined } = {
-		from: undefined,
-		to: undefined,
-	};
-
-	const selectSquare = (square: any) => {
-		square.square.selected = true;
-
-		let sameColor =
-			square &&
-			prev &&
-			square.piece &&
-			prev.piece &&
-			square.piece.color === prev.piece.color;
-
-		if (sameColor && prev.square) {
-			prev.square.selected = false;
-		} else if (!sameColor && prev && prev.square) {
-			prev.square.selected = false;
-			square.square.selected = false;
-			return movePiece({
-				from: prev.square,
-				to: square.square,
-			});
+		if (lastClickedPiece) {
+			lastClickedPiece.selected = false;
 		}
 
-		return (prev = selectedSquare());
+		piece.selected = true;
+		lastClickedPiece = piece;
 	};
 
-	const movePiece = (move: any) => {
-		let piece = pieces.find(
-			(piece: Piece) => piece.position === move.from.position
-		);
+	const movePiece = (move: any) => {};
 
-		if (piece) {
-			piece.move(move.to.position);
-			piece.available = setAvailable(piece, pieces);
-		}
+	const findSquareWithPiece = (position: number) => {
+		return board.squares.find((s: Square) => s.position === position);
+	};
+
+	const findPieceWithSquare = (position: number) => {
+		return pieces.find((p: Piece) => p.position === position);
 	};
 
 	const eventHandler = (e: any) => {
@@ -137,25 +103,17 @@ export default function Game(): JSX.Element {
 				y < square.y + square.h;
 
 			if (match) {
-				return selectSquare({
-					square: square,
-					piece: pieces.find(
-						(piece: Piece) => piece.position === square.position
-					),
-				});
+				return selectPiece(findPieceWithSquare(square.position));
 			}
 		}
 	};
 
 	const main = () => {
-		let sq = board.squares.find((sq: Square) => sq.selected);
-		let p = pieces.find((p: Piece) => p.position === sq?.position);
-
 		if (ctx !== null) {
 			ctx.clearRect(0, 0, settings.w, settings.h);
 
 			for (let i = 0; i < board.squares.length; i++) {
-				board.squares[i].draw(ctx, p?.available || []);
+				board.squares[i].draw(ctx);
 			}
 
 			for (let i = 0; i < pieces.length; i++) {

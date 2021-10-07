@@ -6,8 +6,10 @@ export class Piece {
 	public role: string;
 	public color: string;
 	public position = 0;
+	public selected: boolean = false;
 
 	public img: HTMLImageElement | null = null;
+	public src: string;
 
 	public hasMoved: boolean = false;
 
@@ -19,7 +21,8 @@ export class Piece {
 		this.position = piece.position;
 
 		this.img = new Image(settings.pieceWidth, settings.pieceHeight);
-		this.img.src = '/pieces/' + this.role + '_' + this.color + '.svg';
+		this.src = this.imgSrc();
+		this.img.src = this.src;
 	}
 
 	move(to: number) {
@@ -30,12 +33,20 @@ export class Piece {
 	}
 
 	capture(pieces: Piece[], index: number): boolean {
-		if (index >= 0) {
+		if (index >= 0 && this.available.includes(index)) {
 			pieces.splice(index, 1);
 			return true;
 		}
 
 		return false;
+	}
+
+	imgSrc(): string {
+		if (this.selected) {
+			return '/pieces/green' + '_' + this.role + '.svg';
+		} else {
+			return '/pieces/' + this.color + '_' + this.role + '.svg';
+		}
 	}
 
 	draw(ctx: CanvasRenderingContext2D): void {
@@ -46,6 +57,7 @@ export class Piece {
 			let dx = col * settings.squareWidth + settings.pieceWidth / 2 + 5;
 			let dy = row * settings.squareHeight + settings.pieceHeight / 2 + 5;
 
+			this.img.src = this.imgSrc();
 			ctx.drawImage(this.img, dx, dy);
 		}
 	}
