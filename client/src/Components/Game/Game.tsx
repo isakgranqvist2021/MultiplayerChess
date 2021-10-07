@@ -37,7 +37,16 @@ export default function Game(): JSX.Element {
 
 	const selectPiece = (squarePosition: number) => {
 		let piece: Piece | undefined = findPieceWithSquare(squarePosition);
-		let hasCaptured: boolean = false;
+		let clickedSameTwice =
+			piece &&
+			lastClickedPiece &&
+			piece.position === lastClickedPiece.position;
+
+		if (clickedSameTwice && piece && lastClickedPiece) {
+			piece.selected = false;
+			lastClickedPiece.selected = false;
+			return (lastClickedPiece = undefined);
+		}
 
 		if (lastClickedPiece) {
 			lastClickedPiece.selected = false;
@@ -45,17 +54,17 @@ export default function Game(): JSX.Element {
 
 		if (piece && lastClickedPiece && piece.color !== player.color) {
 			lastClickedPiece.capture(piece);
-			movePiece(squarePosition);
-			hasCaptured = true;
+			return movePiece(squarePosition);
 		}
 
-		if (piece && !hasCaptured) {
+		if (piece) {
 			piece.selected = true;
 			lastClickedPiece = piece;
+			lastClickedPiece.available = setAvailable(lastClickedPiece);
 		}
 
 		if (!piece && lastClickedPiece) {
-			movePiece(squarePosition);
+			return movePiece(squarePosition);
 		}
 	};
 

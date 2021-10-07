@@ -10,18 +10,24 @@ export const player = {
 export let pieces: Piece[] = [];
 
 const pawn = (piece: any) => {
-	let { color } = player;
 	let moves = [];
 
-	let takeLeft = pieces.find(
-		(p: Piece) => p.color !== color && p.position === piece.position - 8 - 1
-	);
+	let filteredPieces = pieces.filter((p: Piece) => {
+		return !p.captured && p.color !== player.color;
+	});
 
-	let takeRight = pieces.find(
-		(p: Piece) => p.color !== color && p.position === piece.position - 8 + 1
-	);
+	console.log(filteredPieces);
+
+	let takeLeft = filteredPieces.find((p: Piece) => {
+		return p.position === piece.position - 8 - 1;
+	});
+
+	let takeRight = filteredPieces.find((p: Piece) => {
+		return p.position === piece.position - 8 + 1;
+	});
 
 	if (!piece.hasMoved) moves.push(piece.position - 8 * 2);
+
 	if (takeLeft) moves.push(piece.position - 8 - 1);
 	if (takeRight) moves.push(piece.position - 8 + 1);
 
