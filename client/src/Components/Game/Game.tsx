@@ -7,6 +7,7 @@ import { Board } from 'Utils/board';
 import { Piece } from 'Utils/piece';
 import classes from 'Styles/game.module.css';
 import { Square } from 'Utils/square';
+import { setAvailable } from 'Utils/utils';
 
 /*
         ♖♘♗♕♔♗♘♖
@@ -25,7 +26,7 @@ const player = {
 function createPieces(): Piece[] {
 	let tp = settings.totalSquares / 2; // total pieces
 
-	return new Array(tp).fill(0).map((p: any, i: number) => {
+	let pieces = new Array(tp).fill(0).map((p: any, i: number) => {
 		let role = 'pawn';
 
 		let isRook = i === 0 || i === 7 || i === 24 || i === 31;
@@ -40,11 +41,18 @@ function createPieces(): Piece[] {
 		if (isQueen) role = 'queen';
 		if (isKing) role = 'king';
 
-		return new Piece({
+		let piece = new Piece({
 			color: i >= tp / 2 ? 'white' : 'black',
 			role: role,
 			position: i >= tp / 2 ? i + tp : i,
 		});
+
+		return piece;
+	});
+
+	return pieces.map((piece: Piece) => {
+		piece.available = setAvailable({ ...piece, hasMoved: false }, pieces);
+		return piece;
 	});
 }
 
@@ -55,9 +63,63 @@ export default function Game(): JSX.Element {
 
 	let ctx: CanvasRenderingContext2D | null = null;
 
-	const removeSelected = (): void => {
-		for (let i = 0; i < board.squares.length; i++) {
-			board.squares[i].selected = false;
+	const selectedSquare = () => {
+		let prevSquare = board.squares.find(
+			(square: Square) => square.selected
+		);
+
+		let prevPiece = pieces.find(
+			(piece: Piece) => piece.position === prevSquare?.position
+		);
+
+		return {
+			square: prevSquare,
+			piece: prevPiece,
+		};
+	};
+
+	let prev: {
+		square: Square | undefined;
+		piece: Piece | undefined;
+	};
+
+	let move: { from: Square | undefined; to: Square | undefined } = {
+		from: undefined,
+		to: undefined,
+	};
+
+	const selectSquare = (square: any) => {
+		square.square.selected = true;
+
+		let sameColor =
+			square &&
+			prev &&
+			square.piece &&
+			prev.piece &&
+			square.piece.color === prev.piece.color;
+
+		if (sameColor && prev.square) {
+			prev.square.selected = false;
+		} else if (!sameColor && prev && prev.square) {
+			prev.square.selected = false;
+			square.square.selected = false;
+			return movePiece({
+				from: prev.square,
+				to: square.square,
+			});
+		}
+
+		return (prev = selectedSquare());
+	};
+
+	const movePiece = (move: any) => {
+		let piece = pieces.find(
+			(piece: Piece) => piece.position === move.from.position
+		);
+
+		if (piece) {
+			piece.move(move.to.position);
+			piece.available = setAvailable(piece, pieces);
 		}
 	};
 
@@ -65,61 +127,35 @@ export default function Game(): JSX.Element {
 		const x = e.nativeEvent.offsetX;
 		const y = e.nativeEvent.offsetY;
 
-		let clickedSquare: Square | undefined;
-		let selectedSquare = board.squares.find(
-			(square: Square) => square.selected
-		);
-
 		for (let i = 0; i < board.squares.length; i++) {
 			let square: Square = board.squares[i];
 
-			let squareFound =
+			let match =
 				x > square.x &&
 				x < square.x + square.w &&
 				y > square.y &&
 				y < square.y + square.h;
 
-			if (squareFound && !selectedSquare) {
-				let comparefn = (p: Piece) => p.position === square.position;
-				let p = pieces.find(comparefn);
-				if (!p) return;
-				if (p.color === player.color) square.selected = true;
-			}
-
-			if (squareFound) {
-				clickedSquare = square;
-			}
-		}
-
-		let comparefn = (p: Piece) => p.position === selectedSquare?.position;
-		let piece = pieces.find(comparefn);
-
-		if (piece && clickedSquare) {
-			removeSelected();
-
-			let comparefn = (p: Piece) =>
-				clickedSquare && p.position === clickedSquare.position;
-
-			let index = pieces.findIndex(comparefn);
-			if (index >= 0 && pieces[index].color === player.color) return;
-
-			if (piece.capture(pieces, index)) {
-				board.captured.push({
-					piece: pieces[index],
-					color: player.color,
+			if (match) {
+				return selectSquare({
+					square: square,
+					piece: pieces.find(
+						(piece: Piece) => piece.position === square.position
+					),
 				});
 			}
-
-			piece.move(clickedSquare.position);
 		}
 	};
 
 	const main = () => {
+		let sq = board.squares.find((sq: Square) => sq.selected);
+		let p = pieces.find((p: Piece) => p.position === sq?.position);
+
 		if (ctx !== null) {
 			ctx.clearRect(0, 0, settings.w, settings.h);
 
 			for (let i = 0; i < board.squares.length; i++) {
-				board.squares[i].draw(ctx);
+				board.squares[i].draw(ctx, p?.available || []);
 			}
 
 			for (let i = 0; i < pieces.length; i++) {

@@ -2,8 +2,6 @@
 
 import settings from './settings';
 
-const setAvailable = (role: string) => {};
-
 export class Piece {
 	public role: string;
 	public color: string;
@@ -12,7 +10,6 @@ export class Piece {
 	public img: HTMLImageElement | null = null;
 
 	public hasMoved: boolean = false;
-	public captured: boolean = false;
 
 	public available: number[] = [];
 
@@ -42,16 +39,14 @@ export class Piece {
 	}
 
 	draw(ctx: CanvasRenderingContext2D): void {
-		if (!this.captured) {
-			let row = Math.floor(this.position / settings.perRow);
-			let col = this.position % settings.perCol;
+		let row = Math.floor(this.position / settings.perRow);
+		let col = this.position % settings.perCol;
 
-			if (this.img) {
-				let dx = col * settings.squareWidth + settings.pieceWidth / 2;
-				let dy = row * settings.squareHeight + settings.pieceHeight / 2;
+		if (this.img) {
+			let dx = col * settings.squareWidth + settings.pieceWidth / 2 + 5;
+			let dy = row * settings.squareHeight + settings.pieceHeight / 2 + 5;
 
-				ctx.drawImage(this.img, dx, dy);
-			}
+			ctx.drawImage(this.img, dx, dy);
 		}
 	}
 }

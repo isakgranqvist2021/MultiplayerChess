@@ -20,11 +20,15 @@ export class Square {
 		this.position = square.position;
 	}
 
-	draw(ctx: CanvasRenderingContext2D): void {
+	draw(ctx: CanvasRenderingContext2D, available: number[]): void {
 		let fillColor = this.color === 'black' ? '#e37046' : '#fff';
 
 		if (this.selected) {
 			fillColor = '#415245';
+		}
+
+		if (available.includes(this.position)) {
+			fillColor = '#a4e08d';
 		}
 
 		ctx.fillStyle = fillColor;
