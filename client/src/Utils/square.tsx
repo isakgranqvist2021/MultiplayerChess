@@ -1,6 +1,6 @@
 /** @format */
 
-import { Settings } from './settings';
+import settings from './settings';
 
 export class Square {
 	public x: number;
@@ -10,16 +10,14 @@ export class Square {
 	public color: string;
 	public position: number;
 	public selected: boolean = false;
-	private settings: Settings;
 
-	constructor(square: any, settings: Settings) {
+	constructor(square: any) {
 		this.x = square.x;
 		this.y = square.y;
 		this.w = square.w;
 		this.h = square.h;
 		this.color = square.color;
 		this.position = square.position;
-		this.settings = settings;
 	}
 
 	draw(ctx: CanvasRenderingContext2D): void {
@@ -32,7 +30,7 @@ export class Square {
 		ctx.fillStyle = fillColor;
 		ctx.fillRect(this.x, this.y, this.w, this.h);
 
-		if (this.settings.debug) {
+		if (settings.debug) {
 			ctx.fillStyle = this.color === 'black' ? '#fff' : '#e37046';
 			ctx.font = '16px Arial';
 			ctx.fillText(

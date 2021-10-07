@@ -1,74 +1,28 @@
 /** @format */
 
-/*
-	total pieces = 32
-*/
-
-export const pieces: any[] = [
-	{ role: 'rook' },
-	{ role: 'knight' },
-	{ role: 'bishop' },
-	{ role: 'queen' },
-	{ role: 'king' },
-	{ role: 'bishop' },
-	{ role: 'knight' },
-	{ role: 'rook' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'pawn' },
-	{ role: 'rook' },
-	{ role: 'knight' },
-	{ role: 'bishop' },
-	{ role: 'queen' },
-	{ role: 'king' },
-	{ role: 'bishop' },
-	{ role: 'knight' },
-	{ role: 'rook' },
-];
-
-interface IPiece {
-	role: string;
-	color: 'black' | 'white';
-	position: number;
-}
+import settings from './settings';
 
 const setAvailable = (role: string) => {};
 
 export class Piece {
 	public role: string;
-	public position = 0;
 	public color: string;
-	public img_path: string = '';
+	public position = 0;
+
 	public img: HTMLImageElement | null = null;
+
 	public hasMoved: boolean = false;
 	public captured: boolean = false;
 
 	public available: number[] = [];
 
-	private row: number = 0;
-	private col: number = 0;
-
-	constructor(piece: IPiece) {
+	constructor(piece: any) {
 		this.role = piece.role;
 		this.color = piece.color;
 		this.position = piece.position;
-		this.img_path = `/pieces/${this.role}_${this.color}.svg`;
-		this.img = new Image();
-		this.img.src = this.img_path;
+
+		this.img = new Image(settings.pieceWidth, settings.pieceHeight);
+		this.img.src = '/pieces/' + this.role + '_' + this.color + '.svg';
 	}
 
 	move(to: number) {
@@ -89,15 +43,14 @@ export class Piece {
 
 	draw(ctx: CanvasRenderingContext2D): void {
 		if (!this.captured) {
-			this.row = Math.floor(this.position / 8);
-			this.col = this.position % 8;
+			let row = Math.floor(this.position / settings.perRow);
+			let col = this.position % settings.perCol;
 
 			if (this.img) {
-				ctx.drawImage(
-					this.img,
-					this.col * 100 + 25,
-					this.row * 100 + 25
-				);
+				let dx = col * settings.squareWidth + settings.pieceWidth / 2;
+				let dy = row * settings.squareHeight + settings.pieceHeight / 2;
+
+				ctx.drawImage(this.img, dx, dy);
 			}
 		}
 	}

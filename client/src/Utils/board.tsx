@@ -1,6 +1,7 @@
 /** @format */
 
-import { Settings } from './settings';
+import { Piece } from './piece';
+import settings from './settings';
 import { Square } from './square';
 
 /*
@@ -11,39 +12,30 @@ import { Square } from './square';
 */
 
 export class Board {
-	private totalSquares: number;
-	private perRow: number;
-	public squares: Square[];
-	private colors: any[];
+	public squares: Square[] = [];
+	public captured: { piece: Piece; color: string }[] = [];
 
-	constructor(settings: Settings) {
-		this.colors = settings.colors;
-		this.totalSquares = 64;
-		this.perRow = 8;
-		this.squares = [];
-		this.create(settings);
+	constructor() {
+		this.create();
 	}
 
-	create(settings: Settings) {
-		let w: number = settings.w / this.perRow;
-		let h: number = settings.h / this.perRow;
+	create() {
+		let w: number = settings.w / settings.perRow;
+		let h: number = settings.h / settings.perRow;
 		let x: number = 0;
 		let y: number = 0;
 
-		for (let i = 0; i < this.totalSquares; i++) {
-			let color = this.colors[0];
+		for (let i = 0; i < settings.totalSquares; i++) {
+			let color = settings.colors[0];
 
-			let square = new Square(
-				{
-					x: x,
-					y: y,
-					w: w,
-					h: h,
-					color: color,
-					position: i,
-				},
-				settings
-			);
+			let square = new Square({
+				x: x,
+				y: y,
+				w: w,
+				h: h,
+				color: color,
+				position: i,
+			});
 
 			x += w;
 
@@ -51,7 +43,7 @@ export class Board {
 				x = 0;
 				y += h;
 			} else {
-				this.colors.reverse();
+				settings.colors.reverse();
 			}
 
 			this.squares.push(square);

@@ -1,13 +1,20 @@
 /** @format */
 
-export class Settings {
-	public w: number;
-	public h: number;
+class Settings {
+	public w: number = 800;
+	public h: number = 800;
 	public colors: any[] = ['white', 'black'];
 	public debug: boolean = true;
+	public totalSquares = 64;
 
-	constructor() {
-		this.w = 800;
-		this.h = 800;
-	}
+	public perRow = 8;
+	public perCol = this.totalSquares / this.perRow;
+
+	public pieceWidth: number = 40;
+	public pieceHeight: number = 40;
+
+	public squareWidth: number = this.w / this.perRow;
+	public squareHeight: number = this.h / this.perCol;
 }
+
+export default new Settings();
