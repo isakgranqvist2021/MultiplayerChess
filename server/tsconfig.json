@@ -1,1 +1,13 @@
-{}
+{
+	"compilerOptions": {
+		"outDir": "dist",
+		"baseUrl": "src",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"target": "es6",
+		"noImplicitAny": true,
+		"sourceMap": false
+	}
+}
