@@ -22,7 +22,7 @@ import { setAvailable, pieces, player, resetPieces } from 'Game/global';
 
 export default function GameComponent(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
-	let board: Board = new Board();
+	let board: Board;
 
 	let ctx: CanvasRenderingContext2D | null = null;
 	let lastClickedPiece: Piece | undefined;
@@ -136,6 +136,7 @@ export default function GameComponent(): JSX.Element {
 			canvas.width = settings.w;
 			canvas.height = settings.h;
 			ctx = canvas.getContext('2d');
+			start();
 			main();
 		}
 	}, [canvasRef.current, settings]);

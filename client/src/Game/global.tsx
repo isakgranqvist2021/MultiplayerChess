@@ -72,5 +72,3 @@ export function createPieces(): Piece[] {
 export function resetPieces() {
 	pieces = createPieces();
 }
-
-resetPieces();

@@ -3,6 +3,7 @@
 import settings from './settings';
 import { Piece } from './piece';
 import { pieces, player } from './global';
+
 // ♙♙♙♙♙♙♙♙♙♙♙♙♙♙
 export const pawn = (piece: any): number[] => {
 	// only allow moves on pieces that has same color as player and that has not been captured
@@ -30,6 +31,7 @@ export const pawn = (piece: any): number[] => {
 export const rook = (piece: any): number[] => {
 	// rook can move any x, y direction as long as it does not collide with a piece,
 	// if it collides with a piece it will capture it.
+
 	let position: number = piece.position;
 	let moves: number[] = [];
 	let y: number[] = [];
@@ -40,12 +42,17 @@ export const rook = (piece: any): number[] => {
 	let pos = yEnd;
 
 	for (let i = yEnd; i >= col; i--) {
-		if (pos >= col) y.push(pos);
+		if (pos >= col) y.unshift(pos);
 		pos -= 8;
 	}
 
-	console.log(y);
-	return y;
+	let r = Math.floor(position / 8) * 8;
+	for (let i = r; i < r + 8; i++) {
+		if (i <= r + 8) x.push(i);
+	}
+
+	// if any y or x value collied with a piece then exclude further positions
+	return [...y, ...x];
 };
 
 // ♘♘♘♘♘♘♘♘♘♘♘♘♘♘
