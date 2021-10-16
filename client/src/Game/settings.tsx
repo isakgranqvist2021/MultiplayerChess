@@ -1,20 +1,13 @@
 /** @format */
 
-class Settings {
-	public w: number = 800;
-	public h: number = 800;
-	public colors: any[] = ['white', 'black'];
-	public debug: boolean = true;
-	public totalSquares = 64;
+export const settings = {
+	totalSquares: 64,
+	totalRows: 8,
+	totalCols: 8,
+	w: 800,
+	h: 800,
+	pw: 30,
+	ph: 30,
+};
 
-	public perRow = 8;
-	public perCol = this.totalSquares / this.perRow;
-
-	public pieceWidth: number = 40;
-	public pieceHeight: number = 40;
-
-	public squareWidth: number = this.w / this.perRow;
-	public squareHeight: number = this.h / this.perCol;
-}
-
-export default new Settings();
+export const colors = ['#ffffff', '#7621a3'];

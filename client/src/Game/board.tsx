@@ -1,54 +1,54 @@
 /** @format */
 
-import { Piece } from './piece';
-import settings from './settings';
-import { Square } from './square';
+import { settings } from './settings';
 
-/*
-	For each iteration increase x by the width of one square.
-	If width is greater or equal to the width of the canvas
-	then increase y by the height of one square and reset x to zero.
-	Also, for every other row the colors should invert.
-*/
+const getLetter = (col: number) => {
+	switch (col) {
+		case 1:
+			return 'A';
+		case 2:
+			return 'B';
+		case 3:
+			return 'C';
+		case 4:
+			return 'D';
+		case 5:
+			return 'E';
+		case 6:
+			return 'F';
+		case 7:
+			return 'G';
+		case 8:
+			return 'H';
 
-export class Board {
-	public squares: Square[] = [];
-	public captured: { piece: Piece; color: string }[] = [];
+		default:
+			throw Error('invalid');
+	}
+};
 
-	constructor() {
-		this.squares = [];
-		this.captured = [];
-		this.create();
+export const createBoard = (): Piece[] => {
+	const squares: Piece[] = [];
+	const colors = ['white', 'black'];
+
+	for (let i = 0; i < settings.totalSquares; i++) {
+		let col = Math.floor(i % settings.totalCols);
+		let row = Math.floor(i / settings.totalRows) + 1;
+		let symbol = getLetter(col + 1) + row;
+
+		let color = colors[0];
+		if (i % 8 === 0) colors.reverse();
+		if (i % 2 === 0) color = colors[1];
+
+		let square = {
+			square: i + 1,
+			col: col + 1,
+			row: row,
+			symbol: symbol,
+			color: color,
+		};
+
+		squares.push(square);
 	}
 
-	create() {
-		let w: number = settings.w / settings.perRow;
-		let h: number = settings.h / settings.perRow;
-		let x: number = 0;
-		let y: number = 0;
-
-		for (let i = 0; i < settings.totalSquares; i++) {
-			let color = settings.colors[0];
-
-			let square = new Square({
-				x: x,
-				y: y,
-				w: w,
-				h: h,
-				color: color,
-				position: i,
-			});
-
-			x += w;
-
-			if (x >= settings.w) {
-				x = 0;
-				y += h;
-			} else {
-				settings.colors.reverse();
-			}
-
-			this.squares.push(square);
-		}
-	}
-}
+	return squares;
+};
