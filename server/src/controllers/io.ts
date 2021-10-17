@@ -2,13 +2,19 @@
 
 import WebSocket from 'ws';
 
-import { openRoom, disbandRoom, syncRoom, joinRoom } from './handlers';
-import { rooms, sockets } from './shared';
+import {
+	refreshSocket,
+	openRoom,
+	disbandRoom,
+	syncRoom,
+	joinRoom,
+} from './handlers';
 
 interface Request {
 	type: string;
 	payload: any;
 	room: string;
+	userId: string;
 }
 
 export const connection = (ws: WebSocket) => {
@@ -17,15 +23,21 @@ export const connection = (ws: WebSocket) => {
 	ws.on('message', (data: WebSocket.RawData, isBinary: boolean) => {
 		let request: Request = JSON.parse(data.toString());
 
+		refreshSocket(request.userId, ws);
+
 		switch (request.type) {
 			case 'open room':
-				return openRoom(request.room, request.payload);
+				return openRoom(request.room, request.userId, request.payload);
 			case 'disband room':
-				return disbandRoom(request.room, request.payload);
+				return disbandRoom(
+					request.room,
+					request.userId,
+					request.payload
+				);
 			case 'sync room':
-				return syncRoom(request.room, request.payload);
+				return syncRoom(request.room, request.userId, request.payload);
 			case 'join room':
-				return joinRoom(request.room, request.payload);
+				return joinRoom(request.room, request.userId, request.payload);
 		}
 	});
 };

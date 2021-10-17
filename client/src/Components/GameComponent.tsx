@@ -112,9 +112,9 @@ export default function GameComponent(props: {
 			JSON.stringify({
 				type: 'sync room',
 				payload: {
-					user: props.user,
 					game: game,
 				},
+				userId: props.user?.sub,
 				room: props.roomId,
 			})
 		);

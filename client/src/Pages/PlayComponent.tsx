@@ -31,9 +31,8 @@ export default function PlayComponent(): JSX.Element {
 		socket.send(
 			JSON.stringify({
 				type: 'open room',
-				payload: {
-					...user,
-				},
+				payload: {},
+				userId: user?.sub,
 				room: id,
 			})
 		);

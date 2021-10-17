@@ -19,27 +19,27 @@ import WebSocket from 'ws';
     When the room is created the creator will be assigned a role which is at random
 */
 
-interface Connection {
+export interface IConnection {
 	userId: string; // should map to a Socket
 	role: string; // spectator / white / black
 }
 
-interface Room {
+export interface IRoom {
 	id: string;
 	game: any;
-	connections: Connection[];
+	connections: IConnection[];
 }
 
-export const rooms: Room[] = [];
+export const rooms: IRoom[] = [];
 
 /*
  All sockets that are connected to the application
  will be stored in the sockets array which can then be accessed and broadcasted to.
 */
 
-interface Socket {
+export interface ISocket {
 	userId: string;
 	socket: WebSocket;
 }
 
-export const sockets: Socket[] = [];
+export const sockets: ISocket[] = [];

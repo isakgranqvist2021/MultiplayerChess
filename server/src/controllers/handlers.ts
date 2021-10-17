@@ -1,11 +1,25 @@
 /** @format */
 
+import WebSocket from 'ws';
 import { rooms, sockets } from './shared';
+import { ISocket, IRoom, IConnection } from './shared';
 
-export const openRoom = (id: string, payload: any) => {};
+export const refreshSocket = (userId: string, ws: WebSocket) => {
+	let socket = sockets.find((s: ISocket) => s.userId === userId);
 
-export const disbandRoom = (id: string, payload: any) => {};
+	if (!socket)
+		return sockets.push({
+			userId: userId,
+			socket: ws,
+		});
 
-export const syncRoom = (id: string, payload: any) => {};
+	return (socket.socket = ws);
+};
 
-export const joinRoom = (id: string, payload: any) => {};
+export const openRoom = (room: string, userId: string, payload: any) => {};
+
+export const disbandRoom = (room: string, userId: string, payload: any) => {};
+
+export const syncRoom = (room: string, userId: string, payload: any) => {};
+
+export const joinRoom = (room: string, userId: string, payload: any) => {};
