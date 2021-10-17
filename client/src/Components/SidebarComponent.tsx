@@ -32,8 +32,10 @@ const SidebarContent = styled.div`
 	}
 `;
 
-export default function SidebarComponent(): JSX.Element {
-	const { user, isAuthenticated, isLoading, logout } = useAuth0();
+export default function SidebarComponent(props: {
+	startGame: any;
+}): JSX.Element {
+	const { user, isLoading, logout } = useAuth0();
 
 	if (isLoading) {
 		return <Sidebar>Loading ...</Sidebar>;
@@ -46,7 +48,7 @@ export default function SidebarComponent(): JSX.Element {
 					<img src={user?.picture} alt={user?.name} />
 					<h2>{user?.name}</h2>
 					<p>{user?.email}</p>
-					<button>New Game</button>
+					<button onClick={props.startGame}>New Game</button>
 				</div>
 
 				<button onClick={() => logout()}>Logout</button>

@@ -2,7 +2,7 @@
 
 import classes from 'Styles/game.module.css';
 
-import { useRef, useEffect, MutableRefObject } from 'react';
+import { useRef, useEffect, MutableRefObject, useCallback } from 'react';
 import {
 	settings,
 	colors,
@@ -17,8 +17,8 @@ import {
 } from 'Game/settings';
 import { pieceColor } from 'Game/utils';
 import { squareDimentions } from 'Game/square';
-import { init } from 'Game/init';
 import { getCol, getRow } from 'Game/math';
+import { init } from 'Game/init';
 
 /*
         ♖♘♗♕♔♗♘♖
@@ -30,17 +30,17 @@ import { getCol, getRow } from 'Game/math';
         ♜♞♝♛♚♝♞♜
 */
 
-export default function GameComponent(): JSX.Element {
+export default function GameComponent(props: {
+	activeGame: boolean;
+}): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
 	let ctx: CanvasRenderingContext2D | null = null;
-	let pieces: Piece[] = [];
-	let gbc: any;
 	let game: any;
+	let gbc: any;
+	let pieces: Piece[];
 
 	const main = () => {
 		if (ctx !== null) {
-			gbc = game.board.configuration;
-
 			if (selectedPiece) {
 				setAvailableMoves(game.moves(selectedPiece.symbol));
 			}
@@ -68,10 +68,14 @@ export default function GameComponent(): JSX.Element {
 			}
 		}
 
-		requestAnimationFrame(main);
+		if (props.activeGame) {
+			requestAnimationFrame(main);
+		}
 	};
 
 	const eventHandler = (e: any) => {
+		if (!props.activeGame) return;
+
 		const x = e.nativeEvent.offsetX;
 		const y = e.nativeEvent.offsetY;
 
@@ -103,14 +107,16 @@ export default function GameComponent(): JSX.Element {
 			ctx = canvasRef.current.getContext('2d');
 			canvasRef.current.width = settings.w;
 			canvasRef.current.height = settings.h;
-
-			const newGame = init();
-			game = newGame.game;
-			pieces = newGame.pieces;
-			gbc = game.board.configuration;
-			return main();
 		}
 	}, [canvasRef.current]);
+
+	useEffect(() => {
+		let g = init();
+		game = g.game;
+		pieces = g.pieces;
+		gbc = game.board.configuration;
+		return main();
+	}, [props.activeGame]);
 
 	return (
 		<div className={classes.game}>
