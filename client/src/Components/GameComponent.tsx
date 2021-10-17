@@ -88,11 +88,11 @@ export default function GameComponent(): JSX.Element {
 				if (canMove) {
 					game.move(selectedPiece.symbol, pieces[i].symbol);
 					setSelectedPiece(null);
-					setAvailableMoves([]);
+					return setAvailableMoves([]);
 				}
 
 				if (pieceColor(p) === gbc.turn) {
-					setSelectedPiece(pieces[i]);
+					return setSelectedPiece(pieces[i]);
 				}
 			}
 		}
