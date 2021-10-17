@@ -1,5 +1,15 @@
 /** @format */
 
-import testController from './controllers/test';
+import dotenv from 'dotenv';
+import path from 'path';
 
-testController();
+dotenv.config({
+	path: path.resolve('./src/.env'), // remove this line in production
+	debug: true, // remove this line in production
+});
+
+import { server, app, wss, HOST, PORT } from './config';
+
+server.listen(PORT, () => {
+	console.log(`Server listening on http://${HOST}:${PORT}`);
+});
