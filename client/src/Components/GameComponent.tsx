@@ -2,7 +2,7 @@
 
 import classes from 'Styles/game.module.css';
 
-import { useRef, useEffect, MutableRefObject, useCallback } from 'react';
+import { useState, useRef, useEffect, MutableRefObject } from 'react';
 import {
 	settings,
 	colors,
@@ -32,6 +32,9 @@ import { init } from 'Game/init';
 
 export default function GameComponent(props: {
 	activeGame: boolean;
+	socket: WebSocket;
+	user: any;
+	roomId: string;
 }): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
 	let ctx: CanvasRenderingContext2D | null = null;
@@ -92,14 +95,29 @@ export default function GameComponent(props: {
 				if (canMove) {
 					game.move(selectedPiece.symbol, pieces[i].symbol);
 					setSelectedPiece(null);
+					syncRoom();
 					return setAvailableMoves([]);
 				}
 
 				if (pieceColor(p) === gbc.turn) {
+					syncRoom();
 					return setSelectedPiece(pieces[i]);
 				}
 			}
 		}
+	};
+
+	const syncRoom = () => {
+		props.socket.send(
+			JSON.stringify({
+				type: 'sync room',
+				payload: {
+					user: props.user,
+					game: game,
+				},
+				room: props.roomId,
+			})
+		);
 	};
 
 	useEffect(() => {
