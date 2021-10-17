@@ -32,16 +32,16 @@ export const createBoard = (): Piece[] => {
 
 	for (let i = 0; i < settings.totalSquares; i++) {
 		let col = Math.floor(i % settings.totalCols);
-		let row = Math.floor(i / settings.totalRows) + 1;
-		let symbol = getLetter(col + 1) + row;
+		let row = Math.floor(i / settings.totalRows) + settings.indexOffset;
+		let symbol = getLetter(col + settings.indexOffset) + row;
 
 		let color = colors[0];
 		if (i % 8 === 0) colors.reverse();
 		if (i % 2 === 0) color = colors[1];
 
 		let square = {
-			square: i + 1,
-			col: col + 1,
+			square: i + settings.indexOffset,
+			col: col + settings.indexOffset,
 			row: row,
 			symbol: symbol,
 			color: color,
