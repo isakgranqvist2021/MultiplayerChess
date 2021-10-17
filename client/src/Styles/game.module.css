@@ -26,6 +26,6 @@
 	width: var(--width);
 	height: var(--height);
 	background: #000;
-	border: 1px solid #e37046;
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	cursor: pointer;
 }

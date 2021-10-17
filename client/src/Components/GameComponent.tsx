@@ -3,13 +3,22 @@
 import classes from 'Styles/game.module.css';
 
 import { useRef, useEffect, MutableRefObject } from 'react';
-
-import { settings, colors } from 'Game/settings';
-import { Game, move, status, moves, aiMove, getFen } from 'js-chess-engine';
-import { createBoard } from 'Game/board';
+import {
+	settings,
+	colors,
+	selectedPiece,
+	availableMoves,
+	aw,
+	ab,
+	setAvailableMoves,
+	images,
+	active,
+	setSelectedPiece,
+} from 'Game/settings';
 import { pieceColor } from 'Game/utils';
-
-const game = new Game();
+import { squareDimentions } from 'Game/square';
+import { init } from 'Game/init';
+import { getCol, getRow } from 'Game/math';
 
 /*
         ♖♘♗♕♔♗♘♖
@@ -21,44 +30,40 @@ const game = new Game();
         ♜♞♝♛♚♝♞♜
 */
 
-let selectedPiece: any = null;
-let availableMoves: any[] = [];
-
 export default function GameComponent(): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
 	let ctx: CanvasRenderingContext2D | null = null;
 	let pieces: Piece[] = [];
+	let gbc: any;
+	let game: any;
 
 	const main = () => {
 		if (ctx !== null) {
+			gbc = game.board.configuration;
+
 			if (selectedPiece) {
-				availableMoves = game.moves(selectedPiece.symbol);
+				setAvailableMoves(game.moves(selectedPiece.symbol));
 			}
 
 			for (let i = 0; i < pieces.length; i++) {
-				let x = ((pieces[i].col - 1) * settings.w) / settings.totalCols;
-				let y = ((pieces[i].row - 1) * settings.h) / settings.totalRows;
-				let w = settings.w / settings.totalRows;
-				let h = settings.h / settings.totalCols;
-
+				let d = squareDimentions(pieces[i]);
 				ctx.fillStyle = colors[pieces[i].color === 'white' ? 0 : 1];
 
-				if (availableMoves.includes(pieces[i].symbol))
-					ctx.fillStyle = '#b399e0';
+				if (availableMoves.includes(pieces[i].symbol)) {
+					ctx.fillStyle = gbc.turn === 'white' ? aw : ab;
+				}
 
-				ctx.fillRect(x, y, w, h);
+				ctx.fillRect(d.x, d.y, d.w, d.h);
 
-				let piece = game.board.configuration.pieces[pieces[i].symbol];
-
+				let piece = gbc.pieces[pieces[i].symbol];
 				if (piece) {
-					let img = new Image();
+					let img = images[piece];
 
-					img.src = `/pieces/${piece}.svg`;
+					if (selectedPiece && i + 1 === selectedPiece.square) {
+						img = active[piece.toLowerCase()];
+					}
 
-					if (selectedPiece && i + 1 === selectedPiece.square)
-						img.src = `/pieces/green/${piece.toLowerCase()}.svg`;
-
-					ctx.drawImage(img, x + settings.pw, y + settings.ph);
+					ctx.drawImage(img, d.x + settings.pw, d.y + settings.ph);
 				}
 			}
 		}
@@ -70,39 +75,41 @@ export default function GameComponent(): JSX.Element {
 		const x = e.nativeEvent.offsetX;
 		const y = e.nativeEvent.offsetY;
 
-		let col = Math.floor(x / 100) + 1;
-		let row = Math.floor(y / 100) + 1;
+		let row = getRow(y);
+		let col = getCol(x);
 
 		for (let i = 0; i < pieces.length; i++) {
 			if (pieces[i].col === col && pieces[i].row === row) {
-				let p = game.board.configuration.pieces[pieces[i].symbol];
+				let p = gbc.pieces[pieces[i].symbol];
 
-				if (
-					selectedPiece &&
-					availableMoves.includes(pieces[i].symbol)
-				) {
+				let canMove =
+					selectedPiece && availableMoves.includes(pieces[i].symbol);
+
+				if (canMove) {
 					game.move(selectedPiece.symbol, pieces[i].symbol);
-					selectedPiece = null;
-					availableMoves = [];
+					setSelectedPiece(null);
+					setAvailableMoves([]);
 				}
 
-				if (pieceColor(p) === game.board.configuration.turn) {
-					selectedPiece = pieces[i];
+				if (pieceColor(p) === gbc.turn) {
+					setSelectedPiece(pieces[i]);
 				}
 			}
 		}
 	};
 
 	useEffect(() => {
-		if (canvasRef) {
+		if (canvasRef && canvasRef.current) {
 			ctx = canvasRef.current.getContext('2d');
 			canvasRef.current.width = settings.w;
 			canvasRef.current.height = settings.h;
-		}
-		console.log(game);
 
-		pieces = createBoard();
-		return main();
+			const newGame = init();
+			game = newGame.game;
+			pieces = newGame.pieces;
+			gbc = game.board.configuration;
+			return main();
+		}
 	}, [canvasRef.current]);
 
 	return (
