@@ -12,6 +12,7 @@ export const connection = (ws: WebSocket) => {
 	ws.on('message', (data: WebSocket.RawData, isBinary: boolean) => {
 		let request: Request = JSON.parse(data.toString());
 
-		console.log(request);
+		switch (request.type) {
+		}
 	});
 };
