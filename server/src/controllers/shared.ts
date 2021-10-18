@@ -22,11 +22,12 @@ import WebSocket from 'ws';
 export interface IConnection {
 	userId: string; // should map to a Socket
 	role: string; // spectator / white / black
+	picture?: string;
+	nickname?: string;
 }
 
 export interface IRoom {
 	id: string;
-	game: any;
 	connections: IConnection[];
 }
 
@@ -43,3 +44,10 @@ export interface ISocket {
 }
 
 export const sockets: ISocket[] = [];
+
+export interface IRequest {
+	type: string;
+	payload: any;
+	rid: string;
+	uid: string;
+}
