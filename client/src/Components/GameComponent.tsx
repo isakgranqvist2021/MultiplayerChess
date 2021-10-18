@@ -2,7 +2,7 @@
 
 import classes from 'Styles/game.module.css';
 
-import { useState, useRef, useEffect, MutableRefObject } from 'react';
+import { useRef, useEffect, MutableRefObject } from 'react';
 import {
 	settings,
 	colors,
@@ -18,7 +18,7 @@ import {
 import { pieceColor } from 'Game/utils';
 import { squareDimentions } from 'Game/square';
 import { getCol, getRow } from 'Game/math';
-import { game, pieces, gbc, playerRole } from 'Game/game';
+import { game, pieces, gbc } from 'Game/game';
 
 /*
         ♖♘♗♕♔♗♘♖ 
@@ -72,7 +72,6 @@ export default function GameComponent(props: {
 	};
 
 	const eventHandler = (e: any) => {
-		if (gbc.turn !== playerRole) return;
 		const x = e.nativeEvent.offsetX;
 		const y = e.nativeEvent.offsetY;
 

@@ -97,6 +97,7 @@ export const playerMove = (request: IRequest) => {
 		room,
 		{
 			type: request.type,
+			uid: request.uid,
 			...request.payload,
 		},
 		false

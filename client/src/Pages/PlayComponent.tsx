@@ -6,7 +6,7 @@ import GameComponent from 'Components/GameComponent';
 import SidebarComponent from 'Components/SidebarComponent';
 import styled from 'styled-components';
 import { randId } from 'Utils/helpers';
-import { game, setPlayerRole } from 'Game/game';
+import { game } from 'Game/game';
 
 const Main = styled.div`
 	display: flex;
@@ -67,15 +67,8 @@ export default function PlayComponent(): JSX.Element {
 		socket.onmessage = (data: any) => {
 			let payload = JSON.parse(data.data);
 
-			console.log(payload);
-
-			switch (payload.type) {
-				case 'player move':
-					return game.move(payload.from, payload.to);
-				case 'open room':
-					return setPlayerRole('white');
-				case 'join room':
-					return setPlayerRole('black');
+			if (payload.type === 'player move' && payload.uid !== user?.sub) {
+				return game.move(payload.from, payload.to);
 			}
 		};
 	}, []);
