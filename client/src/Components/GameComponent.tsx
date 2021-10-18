@@ -114,8 +114,8 @@ export default function GameComponent(props: {
 				payload: {
 					game: game,
 				},
-				userId: props.user?.sub,
-				room: props.roomId,
+				uid: props.user?.sub,
+				rid: props.roomId,
 			})
 		);
 	};

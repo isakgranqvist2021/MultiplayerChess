@@ -32,8 +32,8 @@ export default function PlayComponent(): JSX.Element {
 			JSON.stringify({
 				type: 'open room',
 				payload: {},
-				userId: user?.sub,
-				room: id,
+				uid: user?.sub,
+				rid: id,
 			})
 		);
 
