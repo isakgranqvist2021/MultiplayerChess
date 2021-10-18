@@ -33,7 +33,7 @@ import { game, pieces, gbc, playerRole } from 'Game/game';
 
 export default function GameComponent(props: {
 	activeGame: boolean;
-	socket: WebSocket;
+	send: any;
 	user: any;
 	roomId: string;
 }): JSX.Element {
@@ -107,7 +107,7 @@ export default function GameComponent(props: {
 	};
 
 	const syncRoom = (evType: string, from: string, to: string) => {
-		props.socket.send(
+		props.send(
 			JSON.stringify({
 				type: evType,
 				payload: { from, to },
@@ -122,18 +122,6 @@ export default function GameComponent(props: {
 			ctx = canvasRef.current.getContext('2d');
 			canvasRef.current.width = settings.w;
 			canvasRef.current.height = settings.h;
-
-			window.addEventListener('resize', () => {
-				setSettings({
-					...settings,
-					w: window.innerWidth * 0.75,
-					h: window.innerHeight * 0.75,
-				});
-
-				canvasRef.current.width = settings.w;
-				canvasRef.current.height = settings.h;
-			});
-
 			main();
 		}
 	}, [canvasRef.current]);

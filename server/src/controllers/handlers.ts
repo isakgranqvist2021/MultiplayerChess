@@ -24,7 +24,7 @@ export const refreshSocket = (uid: string, ws: WebSocket) => {
 };
 
 export const openRoom = (request: IRequest) => {
-	removePrevConns(request.uid);
+	// removePrevConns(request.uid);
 
 	const roles = ['white', 'black'];
 
@@ -39,6 +39,8 @@ export const openRoom = (request: IRequest) => {
 	};
 
 	rooms.push(room);
+	console.log(rooms);
+
 	return broadcast(
 		room,
 		{
@@ -116,12 +118,9 @@ export const playerMove = (request: IRequest) => {
 };
 
 export const broadcast = (room: IRoom, payload: any, isBinary: boolean) => {
-	const clients: WebSocket[] = [];
-
-	room.connections.forEach((c: IConnection) => {
-		let socket = sockets.find((s: ISocket) => s.userId === c.userId);
-		if (socket) clients.push(socket.socket);
-	});
+	let ids = room.connections.map((c: IConnection) => c.userId);
+	let s = sockets.filter((s: ISocket) => ids.includes(s.userId));
+	let clients = s.map((s: ISocket) => s.socket);
 
 	clients.forEach((client: WebSocket) => {
 		if (client.readyState === WebSocket.OPEN) {

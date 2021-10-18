@@ -31,7 +31,7 @@ export default function GameHeaderComponent(props: {
 
 			<div>
 				{props.connections.map((c: any) => (
-					<p>
+					<p key={c.userId}>
 						{c.userId}: {c.role}
 					</p>
 				))}

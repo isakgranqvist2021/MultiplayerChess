@@ -13,12 +13,6 @@ const Main = styled.div`
 	display: flex;
 `;
 
-interface Request {
-	type: string;
-	payload: any;
-	room?: string;
-}
-
 export default function PlayComponent(): JSX.Element {
 	const socket: WebSocket = new WebSocket('ws://localhost:8080');
 	const { user, isLoading } = useAuth0();
@@ -32,7 +26,7 @@ export default function PlayComponent(): JSX.Element {
 		const id = randId(25);
 		setRoomId(id);
 
-		socket.send(
+		send(
 			JSON.stringify({
 				type: 'open room',
 				payload: {},
@@ -47,7 +41,7 @@ export default function PlayComponent(): JSX.Element {
 	const joinGame = (rid: string) => {
 		setRoomId(rid);
 
-		socket.send(
+		send(
 			JSON.stringify({
 				type: 'join room',
 				payload: {},
@@ -57,6 +51,18 @@ export default function PlayComponent(): JSX.Element {
 		);
 
 		return setActiveGame(true);
+	};
+
+	const send = (payload: any) => {
+		console.log(socket);
+
+		if (socket.OPEN === 1) {
+			return socket.send(payload);
+		} else {
+			return window.setTimeout(() => {
+				send(payload);
+			}, 2000);
+		}
 	};
 
 	useEffect(() => {
@@ -71,7 +77,7 @@ export default function PlayComponent(): JSX.Element {
 		socket.onmessage = (data: any) => {
 			let payload = JSON.parse(data.data);
 
-			console.log('Payload', payload);
+			console.log(payload);
 
 			if (payload.type === 'open room' || payload.type === 'join room') {
 				if (payload.uid === user?.sub) {
@@ -101,7 +107,7 @@ export default function PlayComponent(): JSX.Element {
 			<SidebarComponent startGame={startGame} joinGame={joinGame} />
 			<GameComponent
 				activeGame={activeGame}
-				socket={socket}
+				send={send}
 				user={user}
 				roomId={roomId}
 			/>
