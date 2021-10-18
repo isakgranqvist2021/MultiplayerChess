@@ -2,38 +2,34 @@
 
 import WebSocket from 'ws';
 
+import { IRequest } from './shared';
+
 import {
 	refreshSocket,
 	openRoom,
 	disbandRoom,
 	syncRoom,
 	joinRoom,
+	playerMove,
 } from './handlers';
 
-interface Request {
-	type: string;
-	payload: any;
-	rid: string;
-	uid: string;
-}
-
 export const connection = (ws: WebSocket) => {
-	console.log('new connection');
-
 	ws.on('message', (data: WebSocket.RawData, isBinary: boolean) => {
-		let request: Request = JSON.parse(data.toString());
+		let request: IRequest = JSON.parse(data.toString());
 
 		refreshSocket(request.uid, ws);
 
 		switch (request.type) {
 			case 'open room':
-				return openRoom(request.rid, request.uid, request.payload);
+				return openRoom(request);
 			case 'disband room':
-				return disbandRoom(request.rid, request.uid, request.payload);
+				return disbandRoom(request);
 			case 'sync room':
-				return syncRoom(request.rid, request.uid, request.payload);
+				return syncRoom(request);
 			case 'join room':
-				return joinRoom(request.rid, request.uid, request.payload);
+				return joinRoom(request);
+			case 'player move':
+				return playerMove(request);
 		}
 	});
 };

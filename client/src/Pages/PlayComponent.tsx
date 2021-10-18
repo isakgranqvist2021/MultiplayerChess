@@ -5,8 +5,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 import GameComponent from 'Components/GameComponent';
 import SidebarComponent from 'Components/SidebarComponent';
 import styled from 'styled-components';
-import LoadingComponent from 'Components/LoadingComponent';
 import { randId } from 'Utils/helpers';
+import { game, setPlayerRole } from 'Game/game';
 
 const Main = styled.div`
 	display: flex;
@@ -40,6 +40,21 @@ export default function PlayComponent(): JSX.Element {
 		return setActiveGame(true);
 	};
 
+	const joinGame = (rid: string) => {
+		setRoomId(rid);
+
+		socket.send(
+			JSON.stringify({
+				type: 'join room',
+				payload: {},
+				uid: user?.sub,
+				rid: rid,
+			})
+		);
+
+		return setActiveGame(true);
+	};
+
 	useEffect(() => {
 		socket.onopen = () => {
 			console.log('ws connection open');
@@ -49,8 +64,19 @@ export default function PlayComponent(): JSX.Element {
 			console.log('ws connection closed');
 		};
 
-		socket.onmessage = () => {
-			console.log('ws connection message');
+		socket.onmessage = (data: any) => {
+			let payload = JSON.parse(data.data);
+
+			console.log(payload);
+
+			switch (payload.type) {
+				case 'player move':
+					return game.move(payload.from, payload.to);
+				case 'open room':
+					return setPlayerRole('white');
+				case 'join room':
+					return setPlayerRole('black');
+			}
 		};
 	}, []);
 
@@ -60,7 +86,7 @@ export default function PlayComponent(): JSX.Element {
 
 	return (
 		<Main>
-			<SidebarComponent startGame={startGame} />
+			<SidebarComponent startGame={startGame} joinGame={joinGame} />
 			<GameComponent
 				activeGame={activeGame}
 				socket={socket}

@@ -2,7 +2,7 @@
 
 import WebSocket from 'ws';
 import { rooms, sockets } from './shared';
-import { ISocket, IRoom, IConnection } from './shared';
+import { ISocket, IRoom, IConnection, IRequest } from './shared';
 
 export const refreshSocket = (uid: string, ws: WebSocket) => {
 	let socket = sockets.find((s: ISocket) => s.userId === uid);
@@ -13,40 +13,56 @@ export const refreshSocket = (uid: string, ws: WebSocket) => {
 			socket: ws,
 		});
 
-	return (socket.socket = ws);
+	return;
 };
 
-export const openRoom = (rid: string, uid: string, payload: any) => {
+export const openRoom = (request: IRequest) => {
 	const roles = ['white', 'black'];
 
 	let connection: IConnection = {
-		userId: uid,
+		userId: request.uid,
 		role: roles[Math.floor(Math.random() * roles.length)],
 	};
 
-	return rooms.push({
-		id: rid,
+	let room = {
+		id: request.rid,
 		connections: [connection],
-		game: {},
-	});
+	};
+
+	rooms.push(room);
+	return broadcast(
+		room,
+		{
+			type: request.type,
+			...room,
+		},
+		false
+	);
 };
 
-export const disbandRoom = (rid: string, uid: string, payload: any) => {
-	let roomIndex = rooms.findIndex((r: IRoom) => r.id === rid);
+export const disbandRoom = (request: IRequest) => {
+	let roomIndex = rooms.findIndex((r: IRoom) => r.id === request.rid);
 	if (roomIndex < 0) return;
 
 	return rooms.splice(roomIndex, 1);
 };
 
-export const syncRoom = (rid: string, uid: string, payload: any) => {
-	let room = rooms.find((r: IRoom) => r.id === rid);
+export const syncRoom = (request: IRequest) => {
+	let room = rooms.find((r: IRoom) => r.id === request.rid);
 	if (!room) return;
 
-	return (room.game = payload.game);
+	return broadcast(
+		room,
+		{
+			type: request.type,
+			...room,
+		},
+		false
+	);
 };
 
-export const joinRoom = (rid: string, uid: string, payload: any) => {
-	let room = rooms.find((r: IRoom) => r.id === rid);
+export const joinRoom = (request: IRequest) => {
+	let room = rooms.find((r: IRoom) => r.id === request.rid);
 	if (!room) return;
 	let role = 'white';
 
@@ -59,11 +75,32 @@ export const joinRoom = (rid: string, uid: string, payload: any) => {
 	}
 
 	let connection: IConnection = {
-		userId: uid,
+		userId: request.uid,
 		role: role,
 	};
 
-	return room.connections.push(connection);
+	room.connections.push(connection);
+	return broadcast(
+		room,
+		{
+			type: request.type,
+			...room,
+		},
+		false
+	);
+};
+
+export const playerMove = (request: IRequest) => {
+	let room = rooms.find((r: IRoom) => r.id === request.rid);
+	if (!room) return;
+	return broadcast(
+		room,
+		{
+			type: request.type,
+			...request.payload,
+		},
+		false
+	);
 };
 
 export const broadcast = (room: IRoom, payload: any, isBinary: boolean) => {

@@ -26,7 +26,6 @@ export interface IConnection {
 
 export interface IRoom {
 	id: string;
-	game: any;
 	connections: IConnection[];
 }
 
@@ -43,3 +42,10 @@ export interface ISocket {
 }
 
 export const sockets: ISocket[] = [];
+
+export interface IRequest {
+	type: string;
+	payload: any;
+	rid: string;
+	uid: string;
+}

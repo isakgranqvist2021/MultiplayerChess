@@ -18,10 +18,10 @@ import {
 import { pieceColor } from 'Game/utils';
 import { squareDimentions } from 'Game/square';
 import { getCol, getRow } from 'Game/math';
-import { init } from 'Game/init';
+import { game, pieces, gbc, playerRole } from 'Game/game';
 
 /*
-        ♖♘♗♕♔♗♘♖
+        ♖♘♗♕♔♗♘♖ 
         ♙♙♙♙♙♙♙♙
             
               VS
@@ -38,9 +38,6 @@ export default function GameComponent(props: {
 }): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
 	let ctx: CanvasRenderingContext2D | null = null;
-	let game: any;
-	let gbc: any;
-	let pieces: Piece[];
 
 	const main = () => {
 		if (ctx !== null) {
@@ -71,14 +68,11 @@ export default function GameComponent(props: {
 			}
 		}
 
-		if (props.activeGame) {
-			requestAnimationFrame(main);
-		}
+		return requestAnimationFrame(main);
 	};
 
 	const eventHandler = (e: any) => {
-		if (!props.activeGame) return;
-
+		if (gbc.turn !== playerRole) return;
 		const x = e.nativeEvent.offsetX;
 		const y = e.nativeEvent.offsetY;
 
@@ -94,26 +88,27 @@ export default function GameComponent(props: {
 
 				if (canMove) {
 					game.move(selectedPiece.symbol, pieces[i].symbol);
+					syncRoom(
+						'player move',
+						selectedPiece.symbol,
+						pieces[i].symbol
+					);
 					setSelectedPiece(null);
-					syncRoom();
 					return setAvailableMoves([]);
 				}
 
 				if (pieceColor(p) === gbc.turn) {
-					syncRoom();
 					return setSelectedPiece(pieces[i]);
 				}
 			}
 		}
 	};
 
-	const syncRoom = () => {
+	const syncRoom = (evType: string, from: string, to: string) => {
 		props.socket.send(
 			JSON.stringify({
-				type: 'sync room',
-				payload: {
-					game: game,
-				},
+				type: evType,
+				payload: { from, to },
 				uid: props.user?.sub,
 				rid: props.roomId,
 			})
@@ -125,16 +120,9 @@ export default function GameComponent(props: {
 			ctx = canvasRef.current.getContext('2d');
 			canvasRef.current.width = settings.w;
 			canvasRef.current.height = settings.h;
+			main();
 		}
 	}, [canvasRef.current]);
-
-	useEffect(() => {
-		let g = init();
-		game = g.game;
-		pieces = g.pieces;
-		gbc = game.board.configuration;
-		return main();
-	}, [props.activeGame]);
 
 	return (
 		<div className={classes.game}>
