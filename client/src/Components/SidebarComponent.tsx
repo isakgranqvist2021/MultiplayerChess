@@ -26,11 +26,13 @@ const Sidebar = styled('aside')<{ open: boolean }>`
 	height: 100vh;
 	background-color: #333;
 	width: 250px;
+	border-right: 1px solid #fff;
 
 	@media (max-width: 1150px) {
 		position: fixed;
 		width: 0;
 		overflow: hidden;
+		border-right: none;
 
 		${(props) =>
 			props.open &&

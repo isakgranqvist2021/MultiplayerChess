@@ -21,6 +21,7 @@ export default function PlayComponent(): JSX.Element {
 	const [connections, setConnections] = useState<any[]>([]);
 
 	const startGame = () => {
+		setConnections([]);
 		resetGame();
 
 		const id = randId(25);
@@ -29,7 +30,10 @@ export default function PlayComponent(): JSX.Element {
 		send(
 			JSON.stringify({
 				type: 'open room',
-				payload: {},
+				payload: {
+					picture: user?.picture,
+					nickname: user?.nickname,
+				},
 				uid: user?.sub,
 				rid: id,
 			})
@@ -39,12 +43,17 @@ export default function PlayComponent(): JSX.Element {
 	};
 
 	const joinGame = (rid: string) => {
+		setConnections([]);
+		resetGame();
 		setRoomId(rid);
 
 		send(
 			JSON.stringify({
 				type: 'join room',
-				payload: {},
+				payload: {
+					picture: user?.picture,
+					nickname: user?.nickname,
+				},
 				uid: user?.sub,
 				rid: rid,
 			})

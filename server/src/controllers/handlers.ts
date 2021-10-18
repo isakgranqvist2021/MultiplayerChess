@@ -4,14 +4,7 @@ import WebSocket from 'ws';
 import { rooms, sockets } from './shared';
 import { ISocket, IRoom, IConnection, IRequest } from './shared';
 
-const removePrevConns = (uid: string) => {
-	rooms.forEach((r: IRoom) => {
-		let i = r.connections.findIndex((c: IConnection) => c.userId === uid);
-		if (i >= 0) r.connections.splice(i, 1);
-	});
-};
-
-export const refreshSocket = (uid: string, ws: WebSocket) => {
+export const addSocket = (uid: string, ws: WebSocket) => {
 	let socket = sockets.find((s: ISocket) => s.userId === uid);
 
 	if (!socket)
@@ -20,17 +13,26 @@ export const refreshSocket = (uid: string, ws: WebSocket) => {
 			socket: ws,
 		});
 
-	return;
+	if (!socket.socket.OPEN) {
+		return (socket.socket = ws);
+	}
 };
 
-export const openRoom = (request: IRequest) => {
-	// removePrevConns(request.uid);
+export const disbandRoom = (request: IRequest, isBinary: boolean) => {
+	let roomIndex = rooms.findIndex((r: IRoom) => r.id === request.rid);
+	if (roomIndex < 0) return;
 
+	return rooms.splice(roomIndex, 1);
+};
+
+export const openRoom = (request: IRequest, isBinary: boolean) => {
 	const roles = ['white', 'black'];
 
 	let connection: IConnection = {
 		userId: request.uid,
 		role: roles[Math.floor(Math.random() * roles.length)],
+		picture: request.payload.picture,
+		nickname: request.payload.nickname,
 	};
 
 	let room = {
@@ -48,18 +50,11 @@ export const openRoom = (request: IRequest) => {
 			uid: request.uid,
 			...room,
 		},
-		false
+		isBinary
 	);
 };
 
-export const disbandRoom = (request: IRequest) => {
-	let roomIndex = rooms.findIndex((r: IRoom) => r.id === request.rid);
-	if (roomIndex < 0) return;
-
-	return rooms.splice(roomIndex, 1);
-};
-
-export const syncRoom = (request: IRequest) => {
+export const syncRoom = (request: IRequest, isBinary: boolean) => {
 	let room = rooms.find((r: IRoom) => r.id === request.rid);
 	if (!room) return;
 
@@ -69,11 +64,11 @@ export const syncRoom = (request: IRequest) => {
 			type: request.type,
 			...room,
 		},
-		false
+		isBinary
 	);
 };
 
-export const joinRoom = (request: IRequest) => {
+export const joinRoom = (request: IRequest, isBinary: boolean) => {
 	let room = rooms.find((r: IRoom) => r.id === request.rid);
 	if (!room) return;
 	let role = 'white';
@@ -89,6 +84,8 @@ export const joinRoom = (request: IRequest) => {
 	let connection: IConnection = {
 		userId: request.uid,
 		role: role,
+		picture: request.payload.picture,
+		nickname: request.payload.nickname,
 	};
 
 	room.connections.push(connection);
@@ -99,11 +96,11 @@ export const joinRoom = (request: IRequest) => {
 			uid: request.uid,
 			...room,
 		},
-		false
+		isBinary
 	);
 };
 
-export const playerMove = (request: IRequest) => {
+export const playerMove = (request: IRequest, isBinary: boolean) => {
 	let room = rooms.find((r: IRoom) => r.id === request.rid);
 	if (!room) return;
 	return broadcast(
@@ -113,7 +110,7 @@ export const playerMove = (request: IRequest) => {
 			uid: request.uid,
 			...request.payload,
 		},
-		false
+		isBinary
 	);
 };
 
@@ -125,6 +122,8 @@ export const broadcast = (room: IRoom, payload: any, isBinary: boolean) => {
 	clients.forEach((client: WebSocket) => {
 		if (client.readyState === WebSocket.OPEN) {
 			client.send(JSON.stringify(payload), { binary: isBinary });
+		} else {
+			console.log(`socket not open`);
 		}
 	});
 };

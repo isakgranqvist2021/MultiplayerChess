@@ -22,6 +22,8 @@ import WebSocket from 'ws';
 export interface IConnection {
 	userId: string; // should map to a Socket
 	role: string; // spectator / white / black
+	picture?: string;
+	nickname?: string;
 }
 
 export interface IRoom {
