@@ -13,8 +13,8 @@ import {
 interface Request {
 	type: string;
 	payload: any;
-	room: string;
-	userId: string;
+	rid: string;
+	uid: string;
 }
 
 export const connection = (ws: WebSocket) => {
@@ -23,21 +23,17 @@ export const connection = (ws: WebSocket) => {
 	ws.on('message', (data: WebSocket.RawData, isBinary: boolean) => {
 		let request: Request = JSON.parse(data.toString());
 
-		refreshSocket(request.userId, ws);
+		refreshSocket(request.uid, ws);
 
 		switch (request.type) {
 			case 'open room':
-				return openRoom(request.room, request.userId, request.payload);
+				return openRoom(request.rid, request.uid, request.payload);
 			case 'disband room':
-				return disbandRoom(
-					request.room,
-					request.userId,
-					request.payload
-				);
+				return disbandRoom(request.rid, request.uid, request.payload);
 			case 'sync room':
-				return syncRoom(request.room, request.userId, request.payload);
+				return syncRoom(request.rid, request.uid, request.payload);
 			case 'join room':
-				return joinRoom(request.room, request.userId, request.payload);
+				return joinRoom(request.rid, request.uid, request.payload);
 		}
 	});
 };
