@@ -4,6 +4,20 @@ import WebSocket from 'ws';
 import { rooms, sockets } from './shared';
 import { ISocket, IRoom, IConnection, IRequest } from './shared';
 
+export const resetUser = (userId: string, ws: WebSocket) => {
+	for (let i = 0; i < sockets.length; i++)
+		if (sockets[i].userId === userId) sockets.splice(i, 1);
+
+	for (let i = 0; i < rooms.length; i++) {
+		for (let j = 0; j < rooms[i].connections.length; j++) {
+			if (rooms[i].connections[j].userId === userId)
+				rooms[i].connections.splice(j, 1);
+		}
+	}
+
+	return addSocket(userId, ws);
+};
+
 export const addSocket = (uid: string, ws: WebSocket) => {
 	let socket = sockets.find((s: ISocket) => s.userId === uid);
 
@@ -102,16 +116,17 @@ export const playerMove = (request: IRequest, isBinary: boolean) => {
 
 export const broadcast = (room: IRoom, payload: any, isBinary: boolean) => {
 	let ids = room.connections.map((c: IConnection) => c.userId);
-	let s = sockets.filter((s: ISocket) => ids.includes(s.userId));
-	let clients = s.map((s: ISocket) => s.socket);
+	let filtered = sockets.filter((s: ISocket) => ids.includes(s.userId));
 
 	console.log('Broadcast', room, payload);
 
-	clients.forEach((client: WebSocket) => {
-		if (client.readyState === WebSocket.OPEN) {
-			client.send(JSON.stringify(payload), { binary: isBinary });
+	for (let i = 0; i < filtered.length; i++) {
+		if (filtered[i].socket.readyState === WebSocket.OPEN) {
+			filtered[i].socket.send(JSON.stringify(payload), {
+				binary: isBinary,
+			});
 		} else {
-			console.log(`socket not open`);
+			console.log('Socket closed');
 		}
-	});
+	}
 };

@@ -77,6 +77,13 @@ export default function PlayComponent(): JSX.Element {
 	useEffect(() => {
 		socket.onopen = () => {
 			console.log('ws connection open');
+
+			socket.send(
+				JSON.stringify({
+					type: 'reset user',
+					uid: user?.sub,
+				})
+			);
 		};
 
 		socket.onclose = () => {

@@ -10,6 +10,7 @@ import {
 	disbandRoom,
 	joinRoom,
 	playerMove,
+	resetUser,
 } from './handlers';
 
 export const connection = (ws: WebSocket) => {
@@ -27,6 +28,8 @@ export const connection = (ws: WebSocket) => {
 				return joinRoom(request, isBinary);
 			case 'player move':
 				return playerMove(request, isBinary);
+			case 'reset user':
+				return resetUser(request.uid, ws);
 			default:
 				return;
 		}
