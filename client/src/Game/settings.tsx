@@ -1,6 +1,17 @@
 /** @format */
 
-export const settings = {
+interface ISettings {
+	totalSquares: number;
+	totalRows: number;
+	totalCols: number;
+	w: number;
+	h: number;
+	pw: number;
+	ph: number;
+	indexOffset: number;
+}
+
+export const settings: ISettings = {
 	totalSquares: 64,
 	totalRows: 8,
 	totalCols: 8,
@@ -31,3 +42,5 @@ export const setAvailableMoves = (newState: string[]) =>
 
 export const setSelectedPiece = (piece: Piece | null) =>
 	(selectedPiece = piece);
+
+export const setSettings = (settings: ISettings) => (settings = settings);

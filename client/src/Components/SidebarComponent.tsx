@@ -2,12 +2,42 @@
 
 import { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-const Sidebar = styled.aside`
+const SidebarContainer = styled.div``;
+
+const Button = styled('button')<{ open: boolean }>`
+	display: none;
+
+	@media (max-width: 1150px) {
+		position: fixed;
+		display: block;
+		left: 0;
+
+		${(props) =>
+			props.open &&
+			css`
+				left: 250px;
+			`}
+	}
+`;
+
+const Sidebar = styled('aside')<{ open: boolean }>`
 	height: 100vh;
 	background-color: #333;
 	width: 250px;
+
+	@media (max-width: 1150px) {
+		position: fixed;
+		width: 0;
+		overflow: hidden;
+
+		${(props) =>
+			props.open &&
+			css`
+				width: 250px;
+			`}
+	}
 `;
 
 const SidebarContent = styled.div`
@@ -31,6 +61,19 @@ const SidebarContent = styled.div`
 		padding: 12px;
 		width: 100%;
 	}
+
+	.joinGameForm {
+		margin-top: 10px;
+	}
+
+	input {
+		width: 100%;
+		margin-bottom: 10px;
+		padding: 12px;
+	}
+
+	.joinGameBtn {
+	}
 `;
 
 export default function SidebarComponent(props: {
@@ -39,31 +82,43 @@ export default function SidebarComponent(props: {
 }): JSX.Element {
 	const [rid, setRid] = useState<string>('');
 	const { user, isLoading, logout } = useAuth0();
+	const [open, setOpen] = useState<boolean>(false);
 
 	if (isLoading) {
-		return <Sidebar>Loading ...</Sidebar>;
+		return <Sidebar open={open}>Loading ...</Sidebar>;
 	}
 
 	return (
-		<Sidebar>
-			<SidebarContent>
-				<div>
-					<img src={user?.picture} alt={user?.name} />
-					<h2>{user?.name}</h2>
-					<p>{user?.email}</p>
-					<button onClick={props.startGame}>New Game</button>
+		<SidebarContainer>
+			<Button open={open} onClick={() => setOpen(!open ? true : false)}>
+				Toggle
+			</Button>
+			<Sidebar open={open}>
+				<SidebarContent>
+					<div>
+						<img src={user?.picture} alt={user?.name} />
+						<h2>{user?.name}</h2>
+						<p>{user?.email}</p>
+						<button onClick={props.startGame}>New Game</button>
 
-					<input
-						value={rid}
-						onChange={(e: any) => setRid(e.target.value)}
-					/>
-					<button onClick={() => props.joinGame(rid)}>
-						Join Game
-					</button>
-				</div>
+						<div className='joinGameForm'>
+							<input
+								value={rid}
+								placeholder='cf1hc2jnbf93e6vo8_y6e_255'
+								onChange={(e: any) => setRid(e.target.value)}
+							/>
+							<button
+								disabled={rid.length <= 0}
+								onClick={() => props.joinGame(rid)}
+								className='joinGameBtn'>
+								Join Game
+							</button>
+						</div>
+					</div>
 
-				<button onClick={() => logout()}>Logout</button>
-			</SidebarContent>
-		</Sidebar>
+					<button onClick={() => logout()}>Logout</button>
+				</SidebarContent>
+			</Sidebar>
+		</SidebarContainer>
 	);
 }

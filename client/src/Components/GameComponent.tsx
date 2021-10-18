@@ -14,11 +14,12 @@ import {
 	images,
 	active,
 	setSelectedPiece,
+	setSettings,
 } from 'Game/settings';
 import { pieceColor } from 'Game/utils';
 import { squareDimentions } from 'Game/square';
 import { getCol, getRow } from 'Game/math';
-import { game, pieces, gbc } from 'Game/game';
+import { game, pieces, gbc, playerRole } from 'Game/game';
 
 /*
         ♖♘♗♕♔♗♘♖ 
@@ -72,6 +73,8 @@ export default function GameComponent(props: {
 	};
 
 	const eventHandler = (e: any) => {
+		if (playerRole !== gbc.turn) return;
+
 		const x = e.nativeEvent.offsetX;
 		const y = e.nativeEvent.offsetY;
 
@@ -119,6 +122,18 @@ export default function GameComponent(props: {
 			ctx = canvasRef.current.getContext('2d');
 			canvasRef.current.width = settings.w;
 			canvasRef.current.height = settings.h;
+
+			window.addEventListener('resize', () => {
+				setSettings({
+					...settings,
+					w: window.innerWidth * 0.75,
+					h: window.innerHeight * 0.75,
+				});
+
+				canvasRef.current.width = settings.w;
+				canvasRef.current.height = settings.h;
+			});
+
 			main();
 		}
 	}, [canvasRef.current]);

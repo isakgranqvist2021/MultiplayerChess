@@ -1,13 +1,6 @@
 /** @format */
 
-:root {
-	--width: 800px;
-	--height: 800px;
-}
-
 .game {
-	width: var(--width);
-	height: var(--height);
 	margin: 0 auto;
 	height: 100vh;
 	display: flex;
@@ -23,8 +16,6 @@
 }
 
 .canvas {
-	width: var(--width);
-	height: var(--height);
 	background: #000;
 	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 	cursor: pointer;

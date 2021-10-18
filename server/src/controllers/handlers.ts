@@ -4,6 +4,13 @@ import WebSocket from 'ws';
 import { rooms, sockets } from './shared';
 import { ISocket, IRoom, IConnection, IRequest } from './shared';
 
+const removePrevConns = (uid: string) => {
+	rooms.forEach((r: IRoom) => {
+		let i = r.connections.findIndex((c: IConnection) => c.userId === uid);
+		if (i >= 0) r.connections.splice(i, 1);
+	});
+};
+
 export const refreshSocket = (uid: string, ws: WebSocket) => {
 	let socket = sockets.find((s: ISocket) => s.userId === uid);
 
@@ -17,6 +24,8 @@ export const refreshSocket = (uid: string, ws: WebSocket) => {
 };
 
 export const openRoom = (request: IRequest) => {
+	removePrevConns(request.uid);
+
 	const roles = ['white', 'black'];
 
 	let connection: IConnection = {
@@ -34,6 +43,7 @@ export const openRoom = (request: IRequest) => {
 		room,
 		{
 			type: request.type,
+			uid: request.uid,
 			...room,
 		},
 		false
@@ -84,6 +94,7 @@ export const joinRoom = (request: IRequest) => {
 		room,
 		{
 			type: request.type,
+			uid: request.uid,
 			...room,
 		},
 		false
