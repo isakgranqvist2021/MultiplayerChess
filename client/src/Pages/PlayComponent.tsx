@@ -110,6 +110,9 @@ export default function PlayComponent(): JSX.Element {
 			if (payload.type === 'player move' && payload.uid !== user?.sub) {
 				return game.move(payload.from, payload.to);
 			}
+
+			if (payload.type === 'leave room') {
+			}
 		};
 	}, []);
 

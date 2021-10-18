@@ -9,7 +9,7 @@ dotenv.config({
 });
 
 import { server, wss, HOST, PORT } from './config';
-import { connection } from './controllers/io';
+import { connection } from './routers/io';
 
 wss.on('connection', connection);
 
