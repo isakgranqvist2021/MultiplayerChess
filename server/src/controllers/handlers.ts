@@ -41,27 +41,12 @@ export const openRoom = (request: IRequest, isBinary: boolean) => {
 	};
 
 	rooms.push(room);
-	console.log(rooms);
 
 	return broadcast(
 		room,
 		{
 			type: request.type,
 			uid: request.uid,
-			...room,
-		},
-		isBinary
-	);
-};
-
-export const syncRoom = (request: IRequest, isBinary: boolean) => {
-	let room = rooms.find((r: IRoom) => r.id === request.rid);
-	if (!room) return;
-
-	return broadcast(
-		room,
-		{
-			type: request.type,
 			...room,
 		},
 		isBinary
@@ -89,6 +74,7 @@ export const joinRoom = (request: IRequest, isBinary: boolean) => {
 	};
 
 	room.connections.push(connection);
+
 	return broadcast(
 		room,
 		{
@@ -118,6 +104,8 @@ export const broadcast = (room: IRoom, payload: any, isBinary: boolean) => {
 	let ids = room.connections.map((c: IConnection) => c.userId);
 	let s = sockets.filter((s: ISocket) => ids.includes(s.userId));
 	let clients = s.map((s: ISocket) => s.socket);
+
+	console.log('Broadcast', room, payload);
 
 	clients.forEach((client: WebSocket) => {
 		if (client.readyState === WebSocket.OPEN) {
