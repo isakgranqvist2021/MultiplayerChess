@@ -18,3 +18,8 @@ interface IRequest {
 	rid: string;
 	uid: string;
 }
+
+interface ISocket {
+	userId: string; // should map to a connection if player is in a game
+	socket: import('ws').WebSocket;
+}

@@ -17,11 +17,6 @@ import WebSocket from 'ws';
 
 export const rooms: IRoom[] = [];
 
-export interface ISocket {
-	userId: string;
-	socket: WebSocket;
-}
-
 /*
 	All sockets that are connected to the application
 	will be stored in the sockets array which can then be accessed and broadcasted to.

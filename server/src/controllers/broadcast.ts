@@ -1,5 +1,7 @@
 /** @format */
 
+import { sockets } from '../store/shared';
+
 export default (room: IRoom, payload: any, isBinary: boolean) => {
 	let ids = room.connections.map((c: IConnection) => c.userId);
 	let filtered = sockets.filter((s: ISocket) => ids.includes(s.userId));
