@@ -4,12 +4,9 @@ import { images, active } from './settings';
 import { Game } from 'js-chess-engine';
 import { createBoard } from 'Game/board';
 
-export const init = () => {
-	let game = new Game();
-	let pieces = createBoard();
-
-	for (let k in game.board.configuration.pieces) {
-		let piece = game.board.configuration.pieces[k];
+const loadImages = (pieces: any) => {
+	for (let k in pieces) {
+		let piece = pieces[k];
 		let img = new Image();
 		img.src = `/pieces/${piece}.svg`;
 		images[piece] = img;
@@ -18,6 +15,13 @@ export const init = () => {
 	for (let k in active) {
 		active[k].src = `/pieces/green/${k}.svg`;
 	}
+};
+
+export const init = () => {
+	let game = new Game();
+	let pieces = createBoard();
+
+	loadImages(game.board.configuration.pieces);
 
 	return {
 		game,

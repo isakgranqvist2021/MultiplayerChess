@@ -15,7 +15,10 @@ const Main = styled.div`
 `;
 
 export default function PlayComponent(): JSX.Element {
-	const socket: WebSocket = new WebSocket('ws://localhost:8080');
+	const socket: WebSocket = new WebSocket(
+		process.env.REACT_APP_WS_ADDR ||
+			'wss://chessapplicationcasews.herokuapp.com'
+	);
 	const { user, isLoading } = useAuth0();
 	const [activeGame, setActiveGame] = useState<boolean>(false);
 	const [roomId, setRoomId] = useState<string>('');

@@ -18,8 +18,6 @@ export const connection = (ws: WebSocket) => {
 		// add socket to the sockets array or replace socket if it is closed
 		add_socket(request.uid, ws);
 
-		console.log(request);
-
 		switch (request.type) {
 			case 'open room':
 				return open_room(request, isBinary);
