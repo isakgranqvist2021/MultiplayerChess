@@ -6,18 +6,18 @@ import { createBoard } from 'Game/board';
 
 let file_names: any = {
 	// why is heroku not case sensetive ? '_'
-	b: 'bishop_w.svg',
-	k: 'king_w.svg',
-	n: 'knight_w.svg',
-	p: 'pawn_w.svg',
-	q: 'queen_w.svg',
-	r: 'rook_w.svg',
-	B: 'bishop_b.svg',
-	K: 'king_b.svg',
-	N: 'knight_b.svg',
-	P: 'pawn_b.svg',
-	Q: 'queen_b.svg',
-	R: 'rook_b.svg',
+	B: 'bishop_w.svg',
+	K: 'king_w.svg',
+	N: 'knight_w.svg',
+	P: 'pawn_w.svg',
+	Q: 'queen_w.svg',
+	R: 'rook_w.svg',
+	b: 'bishop_b.svg',
+	k: 'king_b.svg',
+	n: 'knight_b.svg',
+	p: 'pawn_b.svg',
+	q: 'queen_b.svg',
+	r: 'rook_b.svg',
 };
 
 export const init = () => {
