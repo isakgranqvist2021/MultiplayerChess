@@ -129,14 +129,10 @@ export default function GameComponent(props: {
 	return (
 		<div
 			className={classes.game}
-			style={
-				playerRole === 'white'
-					? {
-							transition: 'all 2s ease',
-							transform: 'rotate(180deg)',
-					  }
-					: {}
-			}>
+			style={{
+				transition: 'all 2s ease',
+				transform: 'rotate(90deg)',
+			}}>
 			<canvas
 				onClick={eventHandler}
 				ref={canvasRef}
