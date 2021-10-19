@@ -18,7 +18,7 @@ config_1.app.use('/public', express_1.default.static('./public'));
 config_1.wss.on('connection', io_1.connection);
 config_1.app.get('*', function (req, res) {
     return res.sendFile('./public/index.html', {
-        root: path_1.default.resolve('./public'),
+        root: path_1.default.resolve('./'),
     });
 });
 config_1.server.listen(config_1.PORT, function () {

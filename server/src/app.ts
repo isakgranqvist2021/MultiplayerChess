@@ -18,7 +18,7 @@ wss.on('connection', connection);
 
 app.get('*', (req: Request, res: Response) => {
 	return res.sendFile('./public/index.html', {
-		root: path.resolve('./public'),
+		root: path.resolve('./'),
 	});
 });
 
