@@ -130,9 +130,7 @@ export default function GameComponent(props: {
 		<div
 			className={classes.game}
 			style={
-				props.connections.length > 0 &&
-				props.connections.find((u: any) => u.sub === props.user.sub)
-					.role === 'white'
+				playerRole === 'white'
 					? {
 							transition: 'all 300ms ease',
 							transform: 'rotate(360deg)',
