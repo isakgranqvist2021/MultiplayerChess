@@ -6,13 +6,38 @@ import styled, { css } from 'styled-components';
 
 const SidebarContainer = styled.div``;
 
-const Button = styled('button')<{ open: boolean }>`
+const Button = styled('div')<{ open: boolean }>`
 	display: none;
+	transition: all 300ms ease;
+	z-index: 5;
+	width: 60px;
+	height: 60px;
+	background-color: #fff;
+	padding: 0.5rem;
+	border-radius: 50%;
+
+	span {
+		display: block;
+		width: 75%;
+		height: 2px;
+		background-color: #333;
+	}
 
 	@media (max-width: 1150px) {
 		position: fixed;
-		display: block;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 8px;
 		left: 0;
+		margin: 10px 0 0 10px;
+		box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+		cursor: pointer;
+
+		&:hover {
+			transform: scale(0.9);
+		}
 
 		${(props) =>
 			props.open &&
@@ -27,12 +52,14 @@ const Sidebar = styled('aside')<{ open: boolean }>`
 	background-color: #333;
 	width: 250px;
 	border-right: 1px solid #fff;
+	transition: all 300ms ease;
 
 	@media (max-width: 1150px) {
 		position: fixed;
 		width: 0;
 		overflow: hidden;
 		border-right: none;
+		z-index: 5;
 
 		${(props) =>
 			props.open &&
@@ -42,12 +69,30 @@ const Sidebar = styled('aside')<{ open: boolean }>`
 	}
 `;
 
+const Backdrop = styled('div')<{ open: boolean }>`
+	position: fixed;
+	inset: 0;
+	z-index: 4;
+	background-color: rgba(0, 0, 0, 0);
+	pointer-events: none;
+	transition: all 300ms ease;
+
+	${(props) =>
+		props.open &&
+		css`
+			cursor: pointer;
+			pointer-events: all;
+			background-color: rgba(0, 0, 0, 0.5);
+		`}
+`;
+
 const SidebarContent = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	height: 100%;
 	padding: 50px 20px 20px 20px;
+	width: 250px;
 
 	h2,
 	p {
@@ -93,8 +138,11 @@ export default function SidebarComponent(props: {
 	return (
 		<SidebarContainer>
 			<Button open={open} onClick={() => setOpen(!open ? true : false)}>
-				Toggle
+				<span></span>
+				<span></span>
+				<span></span>
 			</Button>
+			<Backdrop open={open} onClick={() => setOpen(false)} />
 			<Sidebar open={open}>
 				<SidebarContent>
 					<div>

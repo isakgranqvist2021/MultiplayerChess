@@ -21,6 +21,15 @@ export default function PlayComponent(): JSX.Element {
 	const [connections, setConnections] = useState<any[]>([]);
 
 	const startGame = () => {
+		if (roomId.length > 0)
+			send(
+				JSON.stringify({
+					type: 'leave room',
+					uid: user?.sub,
+					rid: roomId,
+				})
+			);
+
 		setConnections([]);
 		resetGame();
 
@@ -100,8 +109,6 @@ export default function PlayComponent(): JSX.Element {
 	};
 
 	const updateGame = (history: any) => {
-		console.log(history);
-
 		for (let i = 0; i < history.length; i++) {
 			game.move(history[i].from, history[i].to);
 		}
@@ -142,9 +149,7 @@ export default function PlayComponent(): JSX.Element {
 					if (payload.uid === user?.sub) return;
 					return updateGame(payload.history);
 				case 'leave room':
-					return console.log(
-						'leave room (remove user from connections)'
-					);
+					return setConnections([...payload.connections]);
 			}
 		};
 	}, []);
