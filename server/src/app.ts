@@ -16,7 +16,7 @@ app.use('/public', express.static('./public'));
 wss.on('connection', connection);
 
 app.get('*', (req: Request, res: Response) => {
-	return res.sendFile('./public/index.html');
+	return res.sendFile('./public/index.html', { root: './public ' });
 });
 
 server.listen(PORT, () => {
