@@ -102,6 +102,7 @@ const SidebarContent = styled.div`
 
 	img {
 		border-radius: 50%;
+		height: 100px;
 		border: 2px solid #fff;
 	}
 
