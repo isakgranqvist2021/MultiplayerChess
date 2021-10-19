@@ -105,29 +105,16 @@ const SidebarContent = styled.div`
 	}
 
 	button {
-		padding: 12px;
 		width: 100%;
-	}
-
-	.joinGameForm {
-		margin-top: 10px;
-	}
-
-	input {
-		width: 100%;
-		margin-bottom: 10px;
 		padding: 12px;
-	}
-
-	.joinGameBtn {
 	}
 `;
 
 export default function SidebarComponent(props: {
 	startGame: any;
-	joinGame: any;
+	activeGame: boolean;
+	leaveGame: any;
 }): JSX.Element {
-	const [rid, setRid] = useState<string>('');
 	const { user, isLoading, logout } = useAuth0();
 	const [open, setOpen] = useState<boolean>(false);
 
@@ -149,21 +136,14 @@ export default function SidebarComponent(props: {
 						<img src={user?.picture} alt={user?.name} />
 						<h2>{user?.name}</h2>
 						<p>{user?.email}</p>
-						<button onClick={props.startGame}>New Game</button>
-
-						<div className='joinGameForm'>
-							<input
-								value={rid}
-								placeholder='cf1hc2jnbf93e6vo8_y6e_255'
-								onChange={(e: any) => setRid(e.target.value)}
-							/>
-							<button
-								disabled={rid.length <= 0}
-								onClick={() => props.joinGame(rid)}
-								className='joinGameBtn'>
-								Join Game
-							</button>
-						</div>
+						<button
+							onClick={() =>
+								props.activeGame
+									? props.leaveGame()
+									: props.startGame()
+							}>
+							{!props.activeGame ? 'New Game' : 'Leave Game'}
+						</button>
 					</div>
 
 					<button onClick={() => logout()}>Logout</button>
