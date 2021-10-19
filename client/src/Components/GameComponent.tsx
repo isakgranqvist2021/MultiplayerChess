@@ -132,8 +132,8 @@ export default function GameComponent(props: {
 			style={
 				playerRole === 'white'
 					? {
-							transition: 'all 300ms ease',
-							transform: 'rotate(360deg)',
+							transition: 'all 2s ease',
+							transform: 'rotate(180deg)',
 					  }
 					: {}
 			}>
