@@ -8,8 +8,8 @@ export const init = () => {
 	let game = new Game();
 	let pieces = createBoard();
 
-	for (let k in game.board.configuration.pieces) {
-		game.board.configuration.pieces[k].src =
+	for (let k in images) {
+		images[k].src =
 			process.env.REACT_APP_SERVER_ADDR + `/public/pieces/${k}.svg`;
 	}
 
