@@ -8,13 +8,14 @@ const loadImages = (pieces: any) => {
 	for (let k in pieces) {
 		let piece = pieces[k];
 		let img = new Image();
-		img.src = process.env.REACT_APP_SERVER_ADDR + `/pieces/${piece}.svg`;
+		img.src =
+			process.env.REACT_APP_SERVER_ADDR + `/public/pieces/${piece}.svg`;
 		images[piece] = img;
 	}
 
 	for (let k in active) {
 		active[k].src =
-			process.env.REACT_APP_SERVER_ADDR + `/pieces/green/${k}.svg`;
+			process.env.REACT_APP_SERVER_ADDR + `/public/pieces/green/${k}.svg`;
 	}
 };
 
