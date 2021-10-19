@@ -54,6 +54,8 @@ export default function PlayComponent(): JSX.Element {
 	};
 
 	const leaveGame = () => {
+		playSound('player_leave');
+
 		send(
 			JSON.stringify({
 				type: 'leave room',
@@ -167,6 +169,7 @@ export default function PlayComponent(): JSX.Element {
 					if (payload.uid === user?.sub) return;
 					return updateGame(payload.history);
 				case 'leave room':
+					playSound('player_leave');
 					return setConnections([...payload.connections]);
 			}
 		};

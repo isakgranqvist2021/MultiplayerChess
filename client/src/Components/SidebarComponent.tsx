@@ -49,7 +49,7 @@ const Button = styled('div')<{ open: boolean }>`
 
 const Sidebar = styled('aside')<{ open: boolean }>`
 	height: 100vh;
-	background-color: #333;
+	background-color: #7621a3;
 	width: 250px;
 	border-right: 1px solid #fff;
 	transition: all 300ms ease;

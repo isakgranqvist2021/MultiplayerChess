@@ -7,7 +7,7 @@ const Header = styled.header`
 	position: fixed;
 	right: 0;
 	width: calc(100% - 250px);
-	background-color: #444444;
+	background-color: #7621a3;
 	padding: 1rem 2rem;
 
 	.headerContent {
@@ -22,13 +22,15 @@ const Header = styled.header`
 		color: #fff;
 
 		.key {
-			color: #c975f7;
+			color: #ffffff;
+			font-weight: 700;
 		}
 	}
 
 	button {
 		padding: 12px;
 		width: 125px;
+		margin-left: 5px;
 	}
 
 	.joinGameForm {
