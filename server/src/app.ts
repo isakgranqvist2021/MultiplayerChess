@@ -8,6 +8,7 @@ import path from 'path';
 // 	path: path.resolve('./src/.env'), // remove this line in production
 // 	debug: true, // remove this line in production
 // });
+dotenv.config();
 
 import { server, app, wss, HOST, PORT } from './config';
 import { connection } from './routers/io';
@@ -16,7 +17,9 @@ app.use('/public', express.static('./public'));
 wss.on('connection', connection);
 
 app.get('*', (req: Request, res: Response) => {
-	return res.sendFile('./public/index.html', { root: './public ' });
+	return res.sendFile('./public/index.html', {
+		root: path.resolve('./public'),
+	});
 });
 
 server.listen(PORT, () => {
