@@ -35,6 +35,7 @@ export default function GameComponent(props: {
 	send: any;
 	user: any;
 	roomId: string;
+	connections: any[];
 }): JSX.Element {
 	const canvasRef: any = useRef<MutableRefObject<HTMLCanvasElement | null>>();
 	let ctx: CanvasRenderingContext2D | null = null;
@@ -126,7 +127,17 @@ export default function GameComponent(props: {
 	}, [canvasRef.current]);
 
 	return (
-		<div className={classes.game}>
+		<div
+			className={classes.game}
+			style={
+				props.connections.find((u: any) => u.sub === props.user.sub)
+					.role === 'white'
+					? {
+							transition: 'all 300ms ease',
+							transform: 'rotate(360deg)',
+					  }
+					: {}
+			}>
 			<canvas
 				onClick={eventHandler}
 				ref={canvasRef}

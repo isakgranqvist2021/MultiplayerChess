@@ -195,6 +195,7 @@ export default function PlayComponent(): JSX.Element {
 				leaveGame={leaveGame}
 			/>
 			<GameComponent
+				connections={connections}
 				activeGame={activeGame}
 				send={send}
 				user={user}
