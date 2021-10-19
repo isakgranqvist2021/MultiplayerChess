@@ -27,7 +27,22 @@ export let selectedPiece: any = null;
 export let availableMoves: any[] = [];
 export const aw = '#32a852';
 export const ab = '#324ea8';
-export let images: any = {};
+
+export let images: any = {
+	b: new Image(),
+	k: new Image(),
+	n: new Image(),
+	p: new Image(),
+	q: new Image(),
+	r: new Image(),
+	B: new Image(),
+	K: new Image(),
+	N: new Image(),
+	P: new Image(),
+	Q: new Image(),
+	R: new Image(),
+};
+
 export let active: any = {
 	b: new Image(),
 	k: new Image(),

@@ -40,7 +40,7 @@ export default function GameComponent(props: {
 	let ctx: CanvasRenderingContext2D | null = null;
 
 	const main = () => {
-		if (ctx !== null) {
+		if (ctx !== null && images) {
 			if (selectedPiece) {
 				setAvailableMoves(game.moves(selectedPiece.symbol));
 			}

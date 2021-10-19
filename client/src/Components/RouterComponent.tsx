@@ -22,6 +22,9 @@ const requireLogin = (to: any, from: any, next: any) => {
 export default function RouterComponent(): JSX.Element {
 	const { isAuthenticated, isLoading } = useAuth0();
 
+	console.log(isAuthenticated);
+	console.log(isLoading);
+
 	if (isLoading) return <LoadingComponent />;
 
 	return (
