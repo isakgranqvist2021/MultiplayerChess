@@ -15,6 +15,7 @@ dotenv_1.default.config();
 var config_1 = require("./config");
 var io_1 = require("./routers/io");
 config_1.app.use('/public', express_1.default.static('./public'));
+config_1.app.use('/static', express_1.default.static('./public/static'));
 config_1.wss.on('connection', io_1.connection);
 config_1.app.get('*', function (req, res) {
     return res.sendFile('./public/index.html', {

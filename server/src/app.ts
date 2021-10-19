@@ -14,6 +14,7 @@ import { server, app, wss, HOST, PORT } from './config';
 import { connection } from './routers/io';
 
 app.use('/public', express.static('./public'));
+app.use('/static', express.static('./public/static'));
 wss.on('connection', connection);
 
 app.get('*', (req: Request, res: Response) => {
