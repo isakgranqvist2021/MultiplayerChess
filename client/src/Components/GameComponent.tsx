@@ -127,12 +127,7 @@ export default function GameComponent(props: {
 	}, [canvasRef.current]);
 
 	return (
-		<div
-			className={classes.game}
-			style={{
-				transition: 'all 2s ease',
-				transform: 'rotate(90deg)',
-			}}>
+		<div className={classes.game}>
 			<canvas
 				onClick={eventHandler}
 				ref={canvasRef}
