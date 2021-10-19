@@ -8,6 +8,7 @@ import GameHeaderComponent from 'Components/GameHeaderComponent';
 import styled from 'styled-components';
 import { randId } from 'Utils/helpers';
 import { game, resetGame, setPlayerRole } from 'Game/game';
+import { playSound } from 'Game/sounds';
 
 const Main = styled.div`
 	display: flex;
@@ -21,6 +22,15 @@ export default function PlayComponent(): JSX.Element {
 	const [connections, setConnections] = useState<any[]>([]);
 
 	const startGame = () => {
+		if (roomId.length > 0)
+			send(
+				JSON.stringify({
+					type: 'leave room',
+					uid: user?.sub,
+					rid: roomId,
+				})
+			);
+
 		setConnections([]);
 		resetGame();
 
@@ -39,7 +49,22 @@ export default function PlayComponent(): JSX.Element {
 			})
 		);
 
+		playSound('game_start');
 		return setActiveGame(true);
+	};
+
+	const leaveGame = () => {
+		send(
+			JSON.stringify({
+				type: 'leave room',
+				uid: user?.sub,
+				rid: roomId,
+			})
+		);
+
+		setActiveGame(false);
+		setRoomId('');
+		setConnections([]);
 	};
 
 	const joinGame = (rid: string) => {
@@ -94,19 +119,17 @@ export default function PlayComponent(): JSX.Element {
 				type: 'sync room',
 				rid: rid,
 				uid: user?.sub,
-				payload: game.board.history,
+				payload: game.board.history.map((hb: any) => ({
+					from: hb.from,
+					to: hb.to,
+				})),
 			})
 		);
 	};
 
 	const updateGame = (history: any) => {
-		console.log(history);
-
-		for (let i = 0; i < history.length; i++) {
+		for (let i = 0; i < history.length; i++)
 			game.move(history[i].from, history[i].to);
-		}
-
-		return;
 	};
 
 	useEffect(() => {
@@ -134,17 +157,17 @@ export default function PlayComponent(): JSX.Element {
 				case 'join room':
 					updatePlayerRole(payload);
 					syncGame(payload.id);
+					playSound('player_join');
 					return setConnections(payload.connections);
 				case 'player move':
+					playSound('player_move');
 					if (payload.uid === user?.sub) return;
 					return game.move(payload.from, payload.to);
 				case 'sync room':
 					if (payload.uid === user?.sub) return;
 					return updateGame(payload.history);
 				case 'leave room':
-					return console.log(
-						'leave room (remove user from connections)'
-					);
+					return setConnections([...payload.connections]);
 			}
 		};
 	}, []);
@@ -155,8 +178,16 @@ export default function PlayComponent(): JSX.Element {
 
 	return (
 		<Main>
-			<GameHeaderComponent connections={connections} roomId={roomId} />
-			<SidebarComponent startGame={startGame} joinGame={joinGame} />
+			<GameHeaderComponent
+				connections={connections}
+				roomId={roomId}
+				joinGame={joinGame}
+			/>
+			<SidebarComponent
+				startGame={startGame}
+				activeGame={activeGame}
+				leaveGame={leaveGame}
+			/>
 			<GameComponent
 				activeGame={activeGame}
 				send={send}

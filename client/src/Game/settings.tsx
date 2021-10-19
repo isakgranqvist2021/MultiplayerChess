@@ -11,7 +11,7 @@ interface ISettings {
 	indexOffset: number;
 }
 
-export const settings: ISettings = {
+export let settings: ISettings = {
 	totalSquares: 64,
 	totalRows: 8,
 	totalCols: 8,
@@ -43,4 +43,4 @@ export const setAvailableMoves = (newState: string[]) =>
 export const setSelectedPiece = (piece: Piece | null) =>
 	(selectedPiece = piece);
 
-export const setSettings = (settings: ISettings) => (settings = settings);
+export const setSettings = (newSettings: ISettings) => (settings = newSettings);

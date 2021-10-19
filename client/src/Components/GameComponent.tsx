@@ -14,7 +14,6 @@ import {
 	images,
 	active,
 	setSelectedPiece,
-	setSettings,
 } from 'Game/settings';
 import { pieceColor } from 'Game/utils';
 import { squareDimentions } from 'Game/square';
