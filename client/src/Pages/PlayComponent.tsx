@@ -43,6 +43,13 @@ export default function PlayComponent(): JSX.Element {
 	};
 
 	const joinGame = (rid: string) => {
+		send(
+			JSON.stringify({
+				type: 'reset user',
+				uid: user?.sub,
+			})
+		);
+
 		setConnections([]);
 		resetGame();
 		setRoomId(rid);
@@ -63,22 +70,49 @@ export default function PlayComponent(): JSX.Element {
 	};
 
 	const send = (payload: any) => {
-		console.log(socket);
-
 		if (socket.OPEN === 1) {
 			return socket.send(payload);
 		} else {
-			return window.setTimeout(() => {
-				send(payload);
-			}, 2000);
+			window.alert('connection lost.. please reload window');
 		}
+	};
+
+	const updatePlayerRole = (payload: any) => {
+		if (payload.uid === user?.sub) {
+			return setPlayerRole(
+				payload.connections.find((c: any) => c.userId === user?.sub)
+					.role
+			);
+		}
+
+		return;
+	};
+
+	const syncGame = (rid: string) => {
+		send(
+			JSON.stringify({
+				type: 'sync room',
+				rid: rid,
+				uid: user?.sub,
+				payload: game.board.history,
+			})
+		);
+	};
+
+	const updateGame = (history: any) => {
+		console.log(history);
+
+		for (let i = 0; i < history.length; i++) {
+			game.move(history[i].from, history[i].to);
+		}
+
+		return;
 	};
 
 	useEffect(() => {
 		socket.onopen = () => {
 			console.log('ws connection open');
-
-			socket.send(
+			send(
 				JSON.stringify({
 					type: 'reset user',
 					uid: user?.sub,
@@ -93,25 +127,24 @@ export default function PlayComponent(): JSX.Element {
 		socket.onmessage = (data: any) => {
 			let payload = JSON.parse(data.data);
 
-			console.log(payload);
-
-			if (payload.type === 'open room' || payload.type === 'join room') {
-				if (payload.uid === user?.sub) {
-					setPlayerRole(
-						payload.connections.find(
-							(c: any) => c.userId === user?.sub
-						).role
+			switch (payload.type) {
+				case 'open room':
+					updatePlayerRole(payload);
+					return setConnections(payload.connections);
+				case 'join room':
+					updatePlayerRole(payload);
+					syncGame(payload.id);
+					return setConnections(payload.connections);
+				case 'player move':
+					if (payload.uid === user?.sub) return;
+					return game.move(payload.from, payload.to);
+				case 'sync room':
+					if (payload.uid === user?.sub) return;
+					return updateGame(payload.history);
+				case 'leave room':
+					return console.log(
+						'leave room (remove user from connections)'
 					);
-				}
-
-				return setConnections(payload.connections);
-			}
-
-			if (payload.type === 'player move' && payload.uid !== user?.sub) {
-				return game.move(payload.from, payload.to);
-			}
-
-			if (payload.type === 'leave room') {
 			}
 		};
 	}, []);
