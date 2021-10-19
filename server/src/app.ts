@@ -1,5 +1,6 @@
 /** @format */
 
+import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -8,9 +9,10 @@ dotenv.config({
 	debug: true, // remove this line in production
 });
 
-import { server, wss, HOST, PORT } from './config';
+import { server, app, wss, HOST, PORT } from './config';
 import { connection } from './routers/io';
 
+app.use('/public', express.static('./public'));
 wss.on('connection', connection);
 
 server.listen(PORT, () => {
