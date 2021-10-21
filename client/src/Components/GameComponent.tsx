@@ -63,7 +63,7 @@ export default function GameComponent(props: {
 					let img = images[piece];
 
 					if (selectedPiece && i + 1 === selectedPiece.square) {
-						img = active[piece.toLowerCase()];
+						img = active[piece];
 					}
 
 					ctx.drawImage(img, d.x + settings.pw, d.y + settings.ph);
@@ -125,19 +125,19 @@ export default function GameComponent(props: {
 		canvasRef.current.height = settings.h;
 	};
 
-	const setMgTop = () => {
+	const setPT = () => {
 		let game = document.getElementById('game');
 		let header = document.getElementById('gameHeader');
 
 		if (game && header) {
-			game.style.marginTop =
+			game.style.paddingTop =
 				header.getBoundingClientRect().height / 2 + 'px';
 		}
 	};
 
 	useEffect(() => {
 		window.addEventListener('resize', onResize);
-		setMgTop();
+		setPT();
 
 		if (canvasRef && canvasRef.current) {
 			ctx = canvasRef.current.getContext('2d');

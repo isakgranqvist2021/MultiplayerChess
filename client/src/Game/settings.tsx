@@ -39,6 +39,12 @@ export let active: IMGDict = {
 	p: new Image(),
 	q: new Image(),
 	r: new Image(),
+	B: new Image(),
+	K: new Image(),
+	N: new Image(),
+	P: new Image(),
+	Q: new Image(),
+	R: new Image(),
 };
 
 const getBoardDim = (): { x: number; y: number; pz: number } => {

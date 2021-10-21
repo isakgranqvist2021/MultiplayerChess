@@ -4,20 +4,22 @@ import { images, active } from './settings';
 import { Game } from 'js-chess-engine';
 import { createBoard } from 'Game/board';
 
+const fileExt = 'png';
+
 let file_names: any = {
 	// why is heroku not case sensetive ? '_'
-	B: 'bishop_w.svg',
-	K: 'king_w.svg',
-	N: 'knight_w.svg',
-	P: 'pawn_w.svg',
-	Q: 'queen_w.svg',
-	R: 'rook_w.svg',
-	b: 'bishop_b.svg',
-	k: 'king_b.svg',
-	n: 'knight_b.svg',
-	p: 'pawn_b.svg',
-	q: 'queen_b.svg',
-	r: 'rook_b.svg',
+	B: 'bishop_w.' + fileExt,
+	K: 'king_w.' + fileExt,
+	N: 'knight_w.' + fileExt,
+	P: 'pawn_w.' + fileExt,
+	Q: 'queen_w.' + fileExt,
+	R: 'rook_w.' + fileExt,
+	b: 'bishop_b.' + fileExt,
+	k: 'king_b.' + fileExt,
+	n: 'knight_b.' + fileExt,
+	p: 'pawn_b.' + fileExt,
+	q: 'queen_b.' + fileExt,
+	r: 'rook_b.' + fileExt,
 };
 
 export const init = () => {
@@ -32,7 +34,8 @@ export const init = () => {
 
 	for (let k in active) {
 		active[k].src =
-			process.env.REACT_APP_SERVER_ADDR + `/public/pieces/green/${k}.svg`;
+			process.env.REACT_APP_SERVER_ADDR +
+			`/public/pieces/active_${file_names[k]}`;
 	}
 
 	return {
