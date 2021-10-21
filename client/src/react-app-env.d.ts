@@ -10,3 +10,7 @@ interface Piece {
 	symbol: string;
 	color: string;
 }
+
+interface IMGDict {
+	[key: string]: HTMLImageElement;
+}

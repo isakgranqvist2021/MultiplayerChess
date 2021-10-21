@@ -14,6 +14,8 @@ import {
 	images,
 	active,
 	setSelectedPiece,
+	setSettings,
+	reloadSettings,
 } from 'Game/settings';
 import { pieceColor } from 'Game/utils';
 import { squareDimentions } from 'Game/square';
@@ -117,9 +119,26 @@ export default function GameComponent(props: {
 		);
 	};
 
-	const onResize = () => {};
+	const onResize = () => {
+		reloadSettings();
+		canvasRef.current.width = settings.w;
+		canvasRef.current.height = settings.h;
+	};
+
+	const setMgTop = () => {
+		let game = document.getElementById('game');
+		let header = document.getElementById('gameHeader');
+
+		if (game && header) {
+			game.style.marginTop =
+				header.getBoundingClientRect().height / 2 + 'px';
+		}
+	};
 
 	useEffect(() => {
+		window.addEventListener('resize', onResize);
+		setMgTop();
+
 		if (canvasRef && canvasRef.current) {
 			ctx = canvasRef.current.getContext('2d');
 			canvasRef.current.width = settings.w;
@@ -129,7 +148,7 @@ export default function GameComponent(props: {
 	}, [canvasRef.current]);
 
 	return (
-		<div className={classes.game}>
+		<div className={classes.game} id='game'>
 			<canvas
 				onClick={eventHandler}
 				ref={canvasRef}

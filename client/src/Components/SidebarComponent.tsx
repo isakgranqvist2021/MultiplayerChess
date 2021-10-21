@@ -125,7 +125,7 @@ export default function SidebarComponent(props: {
 	}
 
 	return (
-		<SidebarContainer>
+		<SidebarContainer id='sidebar'>
 			<Button open={open} onClick={() => setOpen(!open ? true : false)}>
 				<span></span>
 				<span></span>

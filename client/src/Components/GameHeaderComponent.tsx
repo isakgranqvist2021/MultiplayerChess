@@ -93,7 +93,7 @@ export default function GameHeaderComponent(props: {
 }): JSX.Element {
 	const [rid, setRid] = useState<string>('');
 	return (
-		<Header>
+		<Header id='gameHeader'>
 			<div className='headerContent'>
 				{props.roomId.length > 0 && (
 					<p>
