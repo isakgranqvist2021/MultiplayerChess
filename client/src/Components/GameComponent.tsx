@@ -117,6 +117,8 @@ export default function GameComponent(props: {
 		);
 	};
 
+	const onResize = () => {};
+
 	useEffect(() => {
 		if (canvasRef && canvasRef.current) {
 			ctx = canvasRef.current.getContext('2d');

@@ -5,11 +5,11 @@ import dotenv from 'dotenv';
 import path from 'path';
 import cors from 'cors';
 
-// dotenv.config({
-// 	path: path.resolve('./src/.env'), // remove this line in production
-// 	debug: true, // remove this line in production
-// });
-dotenv.config();
+dotenv.config({
+	path: path.resolve('./src/.env'), // remove this line in production
+	debug: true, // remove this line in production
+});
+// dotenv.config();
 
 import { server, app, wss, HOST, PORT } from './config';
 import { connection } from './routers/io';

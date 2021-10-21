@@ -11,14 +11,16 @@ interface ISettings {
 	indexOffset: number;
 }
 
+const [w, h, pw, ph] = [600, 600, 20, 20];
+
 export let settings: ISettings = {
 	totalSquares: 64,
 	totalRows: 8,
 	totalCols: 8,
-	w: 800,
-	h: 800,
-	pw: 30,
-	ph: 30,
+	w: w,
+	h: h,
+	pw: pw,
+	ph: ph,
 	indexOffset: 1,
 };
 
