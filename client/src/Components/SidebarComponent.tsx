@@ -49,10 +49,11 @@ const Button = styled('div')<{ open: boolean }>`
 
 const Sidebar = styled('aside')<{ open: boolean }>`
 	height: 100vh;
-	background-color: #7621a3;
+	background-color: #ffffff;
 	width: 250px;
 	border-right: 1px solid #fff;
 	transition: all 300ms ease;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
 	@media (max-width: 1150px) {
 		position: fixed;
@@ -97,13 +98,13 @@ const SidebarContent = styled.div`
 	h2,
 	p {
 		margin: 10px 0;
-		color: #fff;
+		color: #2e2e2e;
 	}
 
 	img {
 		border-radius: 50%;
 		height: 100px;
-		border: 2px solid #fff;
+		border: 2px solid #2e2e2e;
 	}
 
 	button {

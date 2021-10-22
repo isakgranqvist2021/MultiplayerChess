@@ -7,8 +7,9 @@ const Header = styled.header`
 	position: fixed;
 	right: 0;
 	width: calc(100% - 250px);
-	background-color: #7621a3;
+	background-color: #ffffff;
 	padding: 1rem 2rem;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 
 	.headerContent {
 		margin: 0 auto;
@@ -19,10 +20,10 @@ const Header = styled.header`
 
 	p {
 		margin: 0;
-		color: #fff;
+		color: #2e2e2e;
 
 		.key {
-			color: #ffffff;
+			color: #2e2e2e;
 			font-weight: 700;
 		}
 	}

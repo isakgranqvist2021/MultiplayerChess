@@ -11,7 +11,7 @@ interface ISettings {
 	indexOffset: number;
 }
 
-export const colors = ['#ffffff', '#7621a3'];
+export const colors = ['#ffffff', '#caa2eb'];
 export let selectedPiece: any = null;
 export let availableMoves: any[] = [];
 export const aw = '#32a852';
