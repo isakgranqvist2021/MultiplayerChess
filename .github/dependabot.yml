@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: ""
+    directory: "/client"
+    schedule:
+      interval: "weekly"
+      
+version: 2
+updates:
+  - package-ecosystem: ""
+    directory: "/server"
+    schedule:
+      interval: "weekly"
